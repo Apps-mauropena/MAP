@@ -10,6 +10,11 @@
   --color-ie-gold-dark: #a88339;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 120px; /* Offset for sticky header */
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: #f9f9f9;

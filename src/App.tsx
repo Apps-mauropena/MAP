@@ -83,10 +83,29 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
   React.useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+
+      const sections = ['institucion', 'proposito', 'plan', 'metodologia', 'admision'];
+      let currentSection = '';
+      
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 150 && rect.bottom >= 150) {
+            currentSection = section;
+            break;
+          }
+        }
+      }
+      if (currentSection) {
+        setActiveSection(currentSection);
+      }
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -129,17 +148,20 @@ export default function App() {
 
           <div className="flex items-center space-x-4 lg:space-x-8 flex-shrink-0 md:relative md:left-[30px]">
             <nav className="hidden lg:flex items-center space-x-3 xl:space-x-4 text-[10px] xl:text-xs font-bold tracking-widest text-gray-600 uppercase border-r border-gray-200 pr-4 xl:pr-8">
-              <a href="#institucion" className="hover:text-ie-blue transition-colors">La Institución</a>
-              <a href="#proposito" className="hover:text-ie-blue transition-colors">Nuestro Propósito</a>
-              <a href="#plan" className="hover:text-ie-blue text-gray-900 border-b-2 border-ie-blue pb-1">Maestría</a>
-              <a href="#metodologia" className="hover:text-ie-blue transition-colors">Metodología</a>
-              <a href="#admision" className="hover:text-ie-blue transition-colors">Admisiones</a>
+              <a href="#institucion" onClick={() => setActiveSection('institucion')} className={`hover:text-ie-blue transition-colors ${activeSection === 'institucion' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>La Institución</a>
+              <a href="#proposito" onClick={() => setActiveSection('proposito')} className={`hover:text-ie-blue transition-colors ${activeSection === 'proposito' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Nuestro Propósito</a>
+              <a href="#plan" onClick={() => setActiveSection('plan')} className={`hover:text-ie-blue transition-colors ${activeSection === 'plan' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Maestría</a>
+              <a href="#metodologia" onClick={() => setActiveSection('metodologia')} className={`hover:text-ie-blue transition-colors ${activeSection === 'metodologia' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Metodología</a>
+              <a href="#admision" onClick={() => setActiveSection('admision')} className={`hover:text-ie-blue transition-colors ${activeSection === 'admision' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Admisiones</a>
             </nav>
             <div className="flex items-center space-x-2 xl:space-x-3">
               <button className="hidden md:block px-5 py-2 border border-gray-300 text-xs font-semibold tracking-wide hover:bg-gray-50 transition-colors uppercase">
                 Descargar Folleto
               </button>
-              <button className="hidden md:block px-5 py-2 bg-ie-blue text-white text-xs font-semibold tracking-wide hover:bg-ie-blue-dark transition-colors uppercase shadow-sm">
+              <button 
+                className="hidden md:block px-5 py-2 bg-ie-blue text-white text-xs font-semibold tracking-wide hover:bg-ie-blue-dark transition-colors uppercase shadow-sm"
+                onClick={() => setIsModalOpen(true)}
+              >
                 Solicita Admisión
               </button>
             </div>
@@ -192,7 +214,13 @@ export default function App() {
                    <button className="w-full px-6 py-4 border border-gray-300 text-sm font-bold tracking-wide hover:bg-gray-50 transition-colors uppercase">
                     Descargar Folleto
                    </button>
-                   <button className="w-full px-6 py-4 bg-ie-blue text-white text-sm font-bold tracking-wide hover:bg-ie-blue-dark transition-colors uppercase shadow-sm">
+                   <button 
+                    className="w-full px-6 py-4 bg-ie-blue text-white text-sm font-bold tracking-wide hover:bg-ie-blue-dark transition-colors uppercase shadow-sm"
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                   >
                     Solicita Admisión
                    </button>
                 </motion.div>
@@ -212,7 +240,7 @@ export default function App() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative w-full overflow-hidden h-[75vh] min-h-[520px] md:h-[80vh] md:min-h-[640px]">
+      <section id="institucion" className="relative w-full overflow-hidden h-[75vh] min-h-[520px] md:h-[80vh] md:min-h-[640px]">
         <div className="absolute inset-0 z-0">
           <img 
             src="/cara.map.cpem.jpg" 
@@ -390,7 +418,7 @@ export default function App() {
       </section>
 
       {/* Visual Blocks Section (similar to "MÁS INFORMACIÓN SOBRE IE") */}
-      <section className="py-24 bg-gray-50 border-t border-gray-100">
+      <section id="metodologia" className="py-24 bg-gray-50 border-t border-gray-100">
         <div className="max-w-[1400px] mx-auto px-6">
           <h2 className="text-4xl font-extrabold text-gray-900 uppercase tracking-tight mb-12">
             MÁS SOBRE ESTE PROGRAMA
@@ -419,12 +447,15 @@ export default function App() {
       </section>
 
       {/* Powerful CTA full width */}
-      <section className="bg-ie-blue py-20 text-center">
+      <section id="admision" className="bg-ie-blue py-20 text-center">
          <div className="max-w-4xl mx-auto px-6">
             <h2 className="text-3xl md:text-5xl font-extrabold text-white uppercase tracking-tight mb-8">
               Programas diseñados para llevar tu carrera pública al siguiente nivel
             </h2>
-            <button className="px-10 py-4 bg-white text-ie-blue text-base font-bold uppercase tracking-wide hover:bg-gray-100 transition-colors shadow-lg">
+            <button 
+              className="px-10 py-4 bg-white text-ie-blue text-base font-bold uppercase tracking-wide hover:bg-gray-100 transition-colors shadow-lg"
+              onClick={() => setIsModalOpen(true)}
+            >
               Solicita Admisión Hoy
             </button>
          </div>
@@ -484,7 +515,9 @@ export default function App() {
       {/* Floating Action Buttons */}
       <div className="fixed right-6 bottom-6 md:bottom-auto md:top-1/2 md:-translate-y-1/2 flex flex-col gap-4 z-50">
         <a 
-          href="#" 
+          href="https://wa.me/525544862673" 
+          target="_blank"
+          rel="noopener noreferrer"
           className="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#20bd5a] hover:scale-110 transition-all duration-300 group relative"
           aria-label="WhatsApp"
         >
@@ -493,8 +526,8 @@ export default function App() {
             Escríbenos por WhatsApp
           </span>
         </a>
-        <a 
-          href="#" 
+        <button 
+          onClick={() => setIsPhoneModalOpen(true)}
           className="w-14 h-14 bg-ie-blue text-white rounded-full flex items-center justify-center shadow-lg hover:bg-ie-blue-light hover:scale-110 transition-all duration-300 group relative"
           aria-label="Llamada Telefónica"
         >
@@ -502,7 +535,7 @@ export default function App() {
           <span className="absolute right-full mr-4 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap">
             Llámanos
           </span>
-        </a>
+        </button>
       </div>
 
       {/* Floating Registration Modal */}
@@ -566,6 +599,106 @@ export default function App() {
                     className="w-full mt-6 px-8 py-4 bg-ie-blue text-white text-sm font-bold uppercase tracking-wider hover:bg-ie-blue-dark transition-colors"
                   >
                     Enviar Solicitud
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Telephone Appointment Modal */}
+      <AnimatePresence>
+        {isPhoneModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white w-full max-w-md shadow-2xl relative overflow-hidden"
+            >
+              {/* Decorative top bar */}
+              <div className="h-2 w-full bg-ie-gold"></div>
+              
+              <button 
+                onClick={() => setIsPhoneModalOpen(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition-colors z-10"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              
+              <div className="p-8">
+                <h3 className="text-2xl font-extrabold text-[#000c2e] uppercase tracking-tight mb-2">
+                  Agenda una cita
+                </h3>
+                <p className="text-sm font-semibold text-gray-600 mb-6 uppercase tracking-wider">
+                  telefónica con Admisiones CPEM
+                </p>
+
+                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsPhoneModalOpen(false); }}>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Nombre Completo</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-ie-blue focus:ring-1 focus:ring-ie-blue transition-colors outline-none text-sm"
+                      placeholder="Tu nombre"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Teléfono</label>
+                    <input 
+                      type="tel" 
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-ie-blue focus:ring-1 focus:ring-ie-blue transition-colors outline-none text-sm"
+                      placeholder="Tu número"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Día</label>
+                    <select 
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-ie-blue focus:ring-1 focus:ring-ie-blue transition-colors outline-none text-sm text-gray-700"
+                      required
+                      defaultValue=""
+                    >
+                      <option value="" disabled>Seleccionar día</option>
+                      <option value="Lunes">Lunes</option>
+                      <option value="Martes">Martes</option>
+                      <option value="Miercoles">Miércoles</option>
+                      <option value="Jueves">Jueves</option>
+                      <option value="Viernes">Viernes</option>
+                      <option value="Sabado">Sábado</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Hora (09:00 - 17:00)</label>
+                    <select 
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-ie-blue focus:ring-1 focus:ring-ie-blue transition-colors outline-none text-sm text-gray-700"
+                      required
+                      defaultValue=""
+                    >
+                      <option value="" disabled>Seleccionar hora</option>
+                      <option value="09:00 AM">09:00 AM</option>
+                      <option value="10:00 AM">10:00 AM</option>
+                      <option value="11:00 AM">11:00 AM</option>
+                      <option value="12:00 PM">12:00 PM</option>
+                      <option value="01:00 PM">01:00 PM</option>
+                      <option value="02:00 PM">02:00 PM</option>
+                      <option value="03:00 PM">03:00 PM</option>
+                      <option value="04:00 PM">04:00 PM</option>
+                      <option value="05:00 PM">05:00 PM</option>
+                    </select>
+                  </div>
+                  
+                  <button 
+                    type="submit"
+                    className="w-full mt-6 px-8 py-4 bg-ie-blue text-white text-sm font-bold uppercase tracking-wider hover:bg-ie-blue-light transition-colors relative overflow-hidden group"
+                  >
+                    <div className="absolute inset-0 bg-ie-gold translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></div>
+                    <span className="relative z-10 flex items-center justify-center">
+                      Agendar Cita <ArrowRight className="w-4 h-4 ml-2" />
+                    </span>
                   </button>
                 </form>
               </div>
