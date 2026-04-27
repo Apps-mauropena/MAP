@@ -97,10 +97,10 @@ export default function App() {
       
       {/* Top Header Row */}
       <header className={`transition-all duration-300 sticky top-0 z-50 border-b ${isScrolled ? 'bg-white/80 backdrop-blur-lg border-transparent shadow-sm' : 'bg-white border-gray-100'}`}>
-        <div className="max-w-[1400px] mx-auto px-6 h-[66px] md:h-24 flex items-center justify-between">
-          <div className="flex items-center space-x-3 cursor-pointer">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-[66px] md:h-24 flex items-center justify-between">
+          <div className="flex items-center space-x-[20px] md:space-x-8 cursor-pointer">
             <div 
-              className={`bg-ie-blue transition-all duration-300 ${isScrolled ? 'h-12 w-36 md:h-14 md:w-48' : 'h-14 w-48 md:h-16 md:w-56'}`}
+              className={`bg-ie-blue transition-all duration-300 flex-shrink-0 ${isScrolled ? 'h-9 w-28 md:h-14 md:w-48' : 'h-11 w-36 md:h-16 md:w-56'}`}
               style={{
                 WebkitMaskImage: 'url(/logo.png)',
                 WebkitMaskSize: 'contain',
@@ -114,30 +114,35 @@ export default function App() {
               aria-label="Centro de Postgrados"
               role="img"
             />
-            <div className="leading-tight hidden sm:block">
-              <span className={`block font-bold text-gray-900 tracking-tight transition-all duration-300 ${isScrolled ? 'text-sm md:text-base' : 'text-base md:text-lg'}`}>CENTRO DE</span>
-              <span className={`block font-bold text-gray-900 tracking-tight transition-all duration-300 ${isScrolled ? 'text-sm md:text-base' : 'text-base md:text-lg'}`}>POSTGRADOS</span>
+            
+            <div className="flex items-center space-x-3 md:space-x-6 flex-shrink-0 relative -left-[80px]">
+              <a href="#" className="text-ie-blue hover:text-ie-blue transition-colors relative group" aria-label="Facebook">
+                <FacebookIconFilled className="w-5 h-5 md:w-6 md:h-6 transition-transform duration-300" />
+                <span className="absolute -bottom-2 left-1/2 w-0 h-0.5 bg-ie-blue transition-all duration-300 group-hover:w-full group-hover:-translate-x-1/2"></span>
+              </a>
+              <a href="#" className="text-ie-blue hover:text-ie-blue transition-colors relative group" aria-label="YouTube">
+                <YoutubeIconFilled className="w-6 h-6 md:w-7 md:h-7 transition-transform duration-300" />
+                <span className="absolute -bottom-2 left-1/2 w-0 h-0.5 bg-ie-blue transition-all duration-300 group-hover:w-full group-hover:-translate-x-1/2"></span>
+              </a>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-4 md:space-x-6 relative -left-[75px]">
-            <a href="#" className="text-ie-blue hover:text-ie-blue transition-colors relative group" aria-label="Facebook">
-              <FacebookIconFilled className="w-5 h-5 md:w-6 md:h-6 transition-transform duration-300" />
-              <span className="absolute -bottom-2 left-1/2 w-0 h-0.5 bg-ie-blue transition-all duration-300 group-hover:w-full group-hover:-translate-x-1/2"></span>
-            </a>
-            <a href="#" className="text-ie-blue hover:text-ie-blue transition-colors relative group" aria-label="YouTube">
-              <YoutubeIconFilled className="w-6 h-6 md:w-7 md:h-7 transition-transform duration-300" />
-              <span className="absolute -bottom-2 left-1/2 w-0 h-0.5 bg-ie-blue transition-all duration-300 group-hover:w-full group-hover:-translate-x-1/2"></span>
-            </a>
-          </div>
 
-          <div className="flex items-center space-x-4">
-            <button className="hidden md:block px-6 py-2.5 border border-gray-300 text-sm font-semibold tracking-wide hover:bg-gray-50 transition-colors uppercase">
-              Descargar Folleto
-            </button>
-            <button className="hidden md:block px-6 py-2.5 bg-ie-blue text-white text-sm font-semibold tracking-wide hover:bg-ie-blue-dark transition-colors uppercase shadow-sm">
-              Solicita Admisión
-            </button>
+          <div className="flex items-center space-x-4 lg:space-x-8 flex-shrink-0 md:relative md:left-[30px]">
+            <nav className="hidden lg:flex items-center space-x-3 xl:space-x-4 text-[10px] xl:text-xs font-bold tracking-widest text-gray-600 uppercase border-r border-gray-200 pr-4 xl:pr-8">
+              <a href="#institucion" className="hover:text-ie-blue transition-colors">La Institución</a>
+              <a href="#proposito" className="hover:text-ie-blue transition-colors">Nuestro Propósito</a>
+              <a href="#plan" className="hover:text-ie-blue text-gray-900 border-b-2 border-ie-blue pb-1">Maestría</a>
+              <a href="#metodologia" className="hover:text-ie-blue transition-colors">Metodología</a>
+              <a href="#admision" className="hover:text-ie-blue transition-colors">Admisiones</a>
+            </nav>
+            <div className="flex items-center space-x-2 xl:space-x-3">
+              <button className="hidden md:block px-5 py-2 border border-gray-300 text-xs font-semibold tracking-wide hover:bg-gray-50 transition-colors uppercase">
+                Descargar Folleto
+              </button>
+              <button className="hidden md:block px-5 py-2 bg-ie-blue text-white text-xs font-semibold tracking-wide hover:bg-ie-blue-dark transition-colors uppercase shadow-sm">
+                Solicita Admisión
+              </button>
+            </div>
             <button 
               className="md:hidden p-2 text-gray-600 hover:text-ie-blue transition-colors focus:outline-none"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -197,16 +202,7 @@ export default function App() {
         </AnimatePresence>
       </header>
 
-      {/* Secondary Navigation */}
-      <nav className="border-b border-gray-100 hidden md:block">
-        <div className="max-w-[1400px] mx-auto px-6 h-12 flex items-center justify-center space-x-8 text-xs font-bold tracking-widest text-gray-600 uppercase">
-          <a href="#institucion" className="hover:text-ie-blue transition-colors pb-1">La Institución</a>
-          <a href="#proposito" className="hover:text-ie-blue transition-colors pb-1">Nuestro Propósito</a>
-          <a href="#plan" className="hover:text-ie-blue border-b-2 border-ie-blue pb-1 text-gray-900">Maestría</a>
-          <a href="#metodologia" className="hover:text-ie-blue transition-colors pb-1">Metodología</a>
-          <a href="#admision" className="hover:text-ie-blue transition-colors pb-1">Admisiones</a>
-        </div>
-      </nav>
+
 
       {/* Minimal Banner Notification */}
       <div className="bg-ie-blue text-white py-2.5 flex items-center justify-center group cursor-pointer hover:bg-ie-blue-dark transition-colors px-4 text-center">
@@ -467,8 +463,8 @@ export default function App() {
             <h4 className="text-xl font-bold uppercase tracking-wider mb-6">Contacto</h4>
             <ul className="space-y-4 text-sm text-gray-300">
               <li>Campus Ciudad de México</li>
-              <li>Teléfono: +52 (55) 1234 5678</li>
-              <li>Email: admisiones@cpem.edu.mx</li>
+              <li>Teléfono: 55 4486 2673</li>
+              <li>Email: info@postgradoscpem.mx</li>
               <li className="pt-4 flex gap-4">
                 <a href="#" className="w-8 h-8 rounded-full border border-gray-500 flex items-center justify-center hover:bg-white hover:text-[#000c2e] transition-colors"><Globe className="w-4 h-4"/></a>
               </li>
