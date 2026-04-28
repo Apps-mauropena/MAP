@@ -527,7 +527,7 @@ export default function App() {
             <h4 className="text-xl font-bold uppercase tracking-wider mb-6">Programas</h4>
             <ul className="space-y-4 text-sm text-gray-300">
               <li><a href="#" className="hover:text-white transition-colors font-bold text-white">Maestría en Administración Pública</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Maestría en Evaluación Educativa</a></li>
+              <li><a href="https://maestria.postgradoscpem.mx/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Maestría en Evaluación Educativa</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Diplomados Ejecutivos</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Metodología Online LMS</a></li>
             </ul>
@@ -536,7 +536,7 @@ export default function App() {
             <h4 className="text-xl font-bold uppercase tracking-wider mb-6">Admisiones</h4>
             <ul className="space-y-4 text-sm text-gray-300">
               <li><a href="#" className="hover:text-white transition-colors">Proceso de Admisión</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Becas y Financiación</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Becas y Convenios</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Asesoría Personalizada</a></li>
             </ul>
           </div>
