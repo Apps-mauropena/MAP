@@ -121,11 +121,11 @@ export default function App() {
             <div 
               className={`bg-ie-blue transition-all duration-300 flex-shrink-0 ${isScrolled ? 'h-9 w-28 md:h-14 md:w-48' : 'h-11 w-36 md:h-16 md:w-56'}`}
               style={{
-                WebkitMaskImage: 'url(/logo.png)',
+                WebkitMaskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logo.png)',
                 WebkitMaskSize: 'contain',
                 WebkitMaskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'left center',
-                maskImage: 'url(/logo.png)',
+                maskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logo.png)',
                 maskSize: 'contain',
                 maskRepeat: 'no-repeat',
                 maskPosition: 'left center'
@@ -243,7 +243,7 @@ export default function App() {
       <section id="institucion" className="relative w-full overflow-hidden h-[75vh] min-h-[520px] md:h-[80vh] md:min-h-[640px]">
         <div className="absolute inset-0 z-0">
           <img 
-            src="/cara.map.cpem.jpg" 
+            src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/cara.map.cpem.jpg" 
             alt="Senadores y funcionarios públicos de México en sesión formal" 
             className="w-full h-full object-cover object-center grayscale-[20%]"
           />
