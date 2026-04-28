@@ -134,7 +134,7 @@ export default function App() {
               role="img"
             />
             
-            <div className="flex items-center space-x-3 md:space-x-6 flex-shrink-0 relative -left-[80px]">
+            <div className="flex items-center space-x-3 md:space-x-6 flex-shrink-0 relative -left-[25px] md:-left-[80px]">
               <a href="#" className="text-ie-blue hover:text-ie-blue transition-colors relative group" aria-label="Facebook">
                 <FacebookIconFilled className="w-5 h-5 md:w-6 md:h-6 transition-transform duration-300" />
                 <span className="absolute -bottom-2 left-1/2 w-0 h-0.5 bg-ie-blue transition-all duration-300 group-hover:w-full group-hover:-translate-x-1/2"></span>
@@ -411,6 +411,56 @@ export default function App() {
               <div className="mt-4 p-6 bg-gray-50 border border-gray-200 lg:hidden">
                  <h4 className="font-bold text-gray-900 mb-2 uppercase text-sm">Formato Flexible</h4>
                  <p className="text-sm text-gray-600">Estudia con plataformas de última generación como nuestro Campus 100% en línea apoyado con aula invertida, foros colaborativos y videoconferencias síncronas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Modalidad Asincrónica Section */}
+      <section className="py-24 bg-white border-t border-gray-100">
+        <div className="max-w-[1400px] mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-stretch gap-12 lg:gap-20">
+            <div className="w-full md:w-1/2 pt-0 md:pt-2 order-2 md:order-1">
+              <p className="text-[17px] text-gray-600 mb-10 leading-relaxed">
+                Nuestra Maestría y sus clases están diseñadas para adaptarse a los horarios exigentes de los servidores públicos. El formato asincrónico te permite estudiar a tu propio ritmo, desde cualquier lugar y en el momento que decidas.
+              </p>
+              <ul className="space-y-8">
+                <li className="flex items-start group">
+                  <div className="p-3 bg-gray-50 border border-gray-200 group-hover:border-ie-blue group-hover:bg-ie-blue transition-colors mr-5">
+                    <Monitor className="w-6 h-6 text-ie-blue group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 uppercase tracking-wide mb-2 text-sm group-hover:text-ie-blue transition-colors">Campus Virtual 24/7</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">Accede a videoclases, lecturas guiadas y materiales interactivos disponibles permanentemente. Todo el contenido está grabado y estructurado para que no dependas de horarios fijos de conexión.</p>
+                  </div>
+                </li>
+                <li className="flex items-start group">
+                  <div className="p-3 bg-gray-50 border border-gray-200 group-hover:border-ie-blue group-hover:bg-ie-blue transition-colors mr-5">
+                    <BookOpen className="w-6 h-6 text-ie-blue group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 uppercase tracking-wide mb-2 text-sm group-hover:text-ie-blue transition-colors">Evaluación y Entregas Flexibles</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">Avanza entregando proyectos, análisis de casos y participando en foros de discusión dentro de plazos flexibles (semanales o quincenales), eliminando la presión de los exámenes en tiempo real.</p>
+                  </div>
+                </li>
+                <li className="flex items-start group">
+                  <div className="p-3 bg-gray-50 border border-gray-200 group-hover:border-ie-blue group-hover:bg-ie-blue transition-colors mr-5">
+                    <Users className="w-6 h-6 text-ie-blue group-hover:text-white transition-colors" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 uppercase tracking-wide mb-2 text-sm group-hover:text-ie-blue transition-colors">Tutoría Experta Constante</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">Aunque tu estudio es autónomo, contarás con profesores y asesores respaldando cada paso, proporcionando retroalimentación asíncrona a tus dudas y seguimiento detallado de tu progreso a través del LMS.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div className="w-full md:w-1/2 flex flex-col order-1 md:order-2 mb-10 md:mb-0">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 uppercase tracking-tight mb-8 relative pb-6 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-16 after:h-1 after:bg-ie-gold">
+                Modalidad 100% Asincrónica
+              </h2>
+              <div className="w-full min-h-[350px] md:min-h-[500px] flex-grow bg-[url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center border border-gray-100 shadow-2xl relative">
+                  <div className="absolute inset-0 bg-ie-blue/10"></div>
               </div>
             </div>
           </div>
