@@ -254,7 +254,7 @@ export default function App() {
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 h-full flex flex-col justify-center">
           <div className="max-w-3xl mt-20 md:mt-8 text-center md:text-left flex flex-col items-center md:items-start mx-auto md:mx-0">
             <h1 className="text-3xl md:text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight mb-6 uppercase">
-              Liderazgo de Excelencia para el Sector Público
+              Liderazgo Estratégico para el Sector Público
             </h1>
             <p className="text-base md:text-xl lg:text-2xl text-gray-200 mb-10 font-normal leading-relaxed max-w-2xl px-2 md:px-0">
               Fórmate con la <strong className="text-white font-semibold">Maestría en Administración Pública</strong> del Centro de Postgrados del Estado de México. Prepárate para diseñar, implementar y evaluar políticas que transforman a la sociedad.
