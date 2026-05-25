@@ -280,29 +280,47 @@ export default function App() {
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-12 shadow-xs border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="bg-white p-12 shadow-xs border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+            >
               <Globe className="w-12 h-12 text-ie-blue mb-6" strokeWidth={1.5} />
               <h3 className="text-xl font-bold uppercase tracking-wide text-gray-900 mb-4">Líderes Responsables</h3>
               <p className="text-gray-600 leading-relaxed">
                 Nos comprometemos a formar una nueva generación de servidores públicos con consciencia social, rigor legal y sólida ética administrativa.
               </p>
-            </div>
+            </motion.div>
             
-            <div className="bg-white p-12 shadow-xs border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-white p-12 shadow-xs border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+            >
               <Building className="w-12 h-12 text-ie-blue mb-6" strokeWidth={1.5} />
               <h3 className="text-xl font-bold uppercase tracking-wide text-gray-900 mb-4">Gestión Estratégica</h3>
               <p className="text-gray-600 leading-relaxed">
                 Desarrollamos en nuestros estudiantes competencias avanzadas para enfrentar la complejidad del Estado y dirigir organizaciones públicas de alto impacto.
               </p>
-            </div>
+            </motion.div>
             
-            <div className="bg-white p-12 shadow-xs border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-white p-12 shadow-xs border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+            >
               <Users className="w-12 h-12 text-ie-blue mb-6" strokeWidth={1.5} />
               <h3 className="text-xl font-bold uppercase tracking-wide text-gray-900 mb-4">Enfoque Humano y TIC</h3>
               <p className="text-gray-600 leading-relaxed">
                 Integramos la eficiencia en la gestión del factor humano con la última innovación en tecnologías de la información para la administración pública moderna.
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -322,39 +340,117 @@ export default function App() {
               </button>
             </div>
          </div>
-         <div className="w-full md:w-1/2 min-h-[400px] bg-[url('https://images.unsplash.com/photo-1436450412740-6b988f486c6b?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center">
+         <div 
+           className="w-full md:w-1/2 min-h-[400px] bg-cover bg-[center_-10px] md:bg-center"
+           style={{ backgroundImage: "url('https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/map.portada.04.png')" }}
+         >
          </div>
       </section>
 
       {/* Curriculum Grid Section - Critical Payload Insertion */}
-      <section id="plan" className="py-24 bg-white relative">
+      <section id="plan" className="pt-12 pb-16 md:py-24 bg-white relative">
         <div className="max-w-[1400px] mx-auto px-6">
-          <div className="mb-16">
-            <h2 className="text-4xl font-extrabold text-gray-900 uppercase tracking-tight mb-4">Plan de Estudios</h2>
-            <p className="text-xl text-gray-600 max-w-3xl">
-              Diseñado para desarrollarte a través de un programa de 6 cuatrimestres, abarcando desde fundamentos de investigación hasta la maestría en diseño de políticas públicas.
-            </p>
+          <div className="mb-16 flex flex-col md:flex-row md:items-center justify-between relative gap-8">
+            <div className="max-w-3xl relative z-10">
+              <div className="relative flex items-center mb-6">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-ie-blue uppercase tracking-tight relative z-10">Plan de Estudios</h2>
+                <div className="ml-[30px] z-20 flex-shrink-0">
+                  <img src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/rvoe.sep.cpem.png" alt="RVOE SEP" className="h-[60px] md:h-[90px] w-auto drop-shadow-md object-contain" />
+                </div>
+              </div>
+              <p className="text-xl text-gray-600 mb-4 leading-relaxed">
+                Diseñado para desarrollarte a través de un programa de 6 cuatrimestres, abarcando desde fundamentos de investigación hasta la maestría en diseño de políticas públicas.
+              </p>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="mt-8 inline-flex items-center group relative cursor-default"
+              >
+                {/* Glow background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-ie-blue/10 via-ie-blue/5 to-ie-gold/10 rounded-lg blur-md opacity-70 group-hover:opacity-100 transition-opacity duration-700"></div>
+                
+                <div className="relative overflow-hidden flex items-center px-6 py-3 bg-[#f8f9fa] border border-gray-200/60 rounded-lg shadow-sm hover:shadow-md hover:border-ie-blue/20 transition-all duration-500">
+                  
+                  {/* Animated line */}
+                  <motion.div 
+                    className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-ie-blue/50 to-transparent"
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  />
+
+                  <Award className="w-5 h-5 text-ie-blue mr-3 group-hover:scale-110 group-hover:text-ie-gold transition-all duration-500 z-10" />
+                  <p className="text-[11px] font-bold tracking-widest text-ie-blue uppercase z-10">
+                    RVOE 20193111 <span className="mx-2 text-gray-300">|</span> 
+                    <span className="font-medium text-gray-600">Modalidad no escolarizada</span> <span className="mx-2 text-gray-300">|</span> 
+                    <span className="font-medium text-gray-600">22/02/2018</span>
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+            
+            {/* Subtle Premium Graphic on Desktop */}
+            <div className="hidden lg:flex w-full md:w-1/3 justify-end items-center relative pl-8">
+              <div className="relative w-56 h-56 flex items-center justify-center opacity-80 group">
+                <div className="absolute inset-0 border-[1px] border-ie-blue/10 rounded-full animate-[spin_25s_linear_infinite]"></div>
+                <div className="absolute inset-6 border-[1px] border-ie-gold/20 rounded-full border-dashed animate-[spin_35s_linear_infinite_reverse]"></div>
+                <div className="absolute inset-12 bg-ie-blue/5 rounded-full backdrop-blur-3xl transition-transform duration-1000 group-hover:scale-110"></div>
+                
+                <div className="absolute w-[1px] h-full bg-gradient-to-b from-transparent via-ie-blue/20 to-transparent rotate-45"></div>
+                <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-ie-gold/20 to-transparent rotate-45"></div>
+
+                <div className="absolute w-12 h-12 bg-white rounded-full shadow-[0_0_30px_rgba(0,12,46,0.1)] flex items-center justify-center z-10">
+                  <div className="w-2 h-2 bg-ie-blue rounded-full"></div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Interactive Curriculum Tabs */}
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-12">
             {/* Desktop Tab Selectors */}
-            <div className="hidden lg:flex lg:w-1/4 flex-col gap-2">
-              {curriculumData.map((term) => (
-                <button
-                  key={`desktop-tab-${term.id}`}
-                  onClick={() => setActiveTab(term.id)}
-                  className={`text-left px-6 py-4 font-bold uppercase tracking-wide transition-all ${
-                    activeTab === term.id 
-                      ? 'bg-ie-blue text-white shadow-md' 
-                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{term.title}</span>
-                    <ChevronRight className={`w-5 h-5 ${activeTab === term.id ? 'opacity-100' : 'opacity-0 text-gray-400'} transition-opacity`} />
-                  </div>
-                </button>
+            <div className="hidden lg:flex lg:w-1/4 flex-col gap-2 relative z-10" role="tablist">
+              {curriculumData.map((term, index) => (
+                <div key={`desktop-tab-${term.id}`} className="relative group">
+                  <button
+                    onClick={() => setActiveTab(term.id)}
+                    className={`relative z-10 w-full text-left px-6 py-4 font-bold uppercase tracking-wide transition-colors duration-300 ${
+                      activeTab === term.id 
+                        ? 'text-white' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                    aria-selected={activeTab === term.id}
+                    role="tab"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="relative z-10">{term.title}</span>
+                      <div className="relative w-5 h-5 flex items-center justify-center overflow-hidden">
+                        <ChevronRight className={`absolute transition-all duration-300 ${activeTab === term.id ? 'translate-x-0 opacity-100 text-white' : '-translate-x-full opacity-0 text-ie-blue group-hover:translate-x-0 group-hover:opacity-100'}`} />
+                      </div>
+                    </div>
+                  </button>
+                  
+                  {/* Subtle hover pulse animation for unselected tabs to encourage clicks */}
+                  {activeTab !== term.id && index === 1 && (
+                     <motion.div 
+                       className="absolute right-[22px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-[1.5px] border-ie-blue/40 z-20 pointer-events-none group-hover:opacity-0 transition-opacity"
+                       animate={{ scale: [1, 1.8], opacity: [0.8, 0] }}
+                       transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+                     />
+                  )}
+
+                  {activeTab === term.id ? (
+                    <motion.div
+                      layoutId="active-tab-indicator-desktop"
+                      className="absolute inset-0 bg-ie-blue rounded-lg shadow-[0_4px_20px_-4px_rgba(0,12,46,0.3)] z-0"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gray-50 rounded-lg group-hover:bg-gray-100/80 transition-colors duration-300 z-0 border border-transparent group-hover:border-gray-200"></div>
+                  )}
+                </div>
               ))}
               
               <div className="mt-8 p-6 bg-gray-50 border border-gray-200">
@@ -371,19 +467,31 @@ export default function App() {
                   className="flex flex-col"
                 >
                   {/* Mobile Accordion Button */}
-                  <button
-                    onClick={() => setActiveTab(activeTab === term.id ? 0 : term.id)}
-                    className={`lg:hidden w-full text-left px-6 py-4 font-bold uppercase tracking-wide transition-all ${
-                      activeTab === term.id 
-                        ? 'bg-ie-blue text-white shadow-md' 
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>{term.title}</span>
-                      <ChevronRight className={`w-5 h-5 transition-transform ${activeTab === term.id ? 'rotate-90 text-white' : 'text-gray-400'}`} />
-                    </div>
-                  </button>
+                  <div className="relative group lg:hidden w-full outline-none">
+                    <button
+                      onClick={() => setActiveTab(activeTab === term.id ? 0 : term.id)}
+                      className={`relative w-full z-10 text-left px-6 py-4 font-bold uppercase tracking-wide transition-colors duration-300 ${
+                        activeTab === term.id 
+                          ? 'text-white' 
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between relative z-10">
+                        <span>{term.title}</span>
+                        <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${activeTab === term.id ? 'rotate-90 text-white' : 'text-gray-400 group-hover:text-ie-blue'}`} />
+                      </div>
+                    </button>
+                    {activeTab === term.id ? (
+                      <motion.div
+                        layoutId="active-tab-indicator-mobile"
+                        className="absolute inset-0 bg-ie-blue rounded-lg shadow-md z-0"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors duration-300 z-0"></div>
+                    )}
+                  </div>
 
                   {/* Panel Content */}
                   <div className={`transition-opacity duration-500 ${activeTab === term.id ? 'block opacity-100 mt-4 lg:mt-0' : 'hidden opacity-0'}`}>
@@ -565,7 +673,7 @@ export default function App() {
       {/* Floating Action Buttons */}
       <div className="fixed right-6 bottom-6 md:bottom-auto md:top-1/2 md:-translate-y-1/2 flex flex-col gap-4 z-50">
         <a 
-          href="https://wa.me/525544862673" 
+          href="https://wa.me/525544862673?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20Maestr%C3%ADa%20en%20Administraci%C3%B3n%20P%C3%BAblica." 
           target="_blank"
           rel="noopener noreferrer"
           className="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-lg hover:bg-[#20bd5a] hover:scale-110 transition-all duration-300 group relative"

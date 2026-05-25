@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Proteger imágenes de public - no sincronizar
+public/*.png
+public/*.jpg
+public/*.jpeg
+public/*.webp
+public/*.gif
