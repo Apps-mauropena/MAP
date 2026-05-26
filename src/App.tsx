@@ -614,7 +614,7 @@ export default function App() {
               className="px-10 py-4 bg-white text-ie-blue text-base font-bold uppercase tracking-wide hover:bg-gray-100 transition-colors shadow-lg"
               onClick={() => setIsModalOpen(true)}
             >
-              Solicita Admisión Hoy
+              Solicita información
             </button>
          </div>
       </section>
