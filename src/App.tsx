@@ -85,6 +85,23 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [isPlayingMuestra, setIsPlayingMuestra] = useState(false);
+  const [isVideoFormRequired, setIsVideoFormRequired] = useState(false);
+  const [isVideoFormSubmitted, setIsVideoFormSubmitted] = useState(false);
+  const iframeRef = React.useRef<HTMLIFrameElement>(null);
+
+  React.useEffect(() => {
+    let timer: number;
+    if (isPlayingMuestra && !isVideoFormSubmitted) {
+      // Show form after 30 seconds (30,000 ms), but do not pause the video
+      timer = window.setTimeout(() => {
+        setIsVideoFormRequired(true);
+      }, 30000);
+    }
+    return () => {
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [isPlayingMuestra, isVideoFormSubmitted]);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -254,7 +271,7 @@ export default function App() {
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 h-full flex flex-col justify-center">
           <div className="max-w-3xl mt-20 md:mt-8 text-center md:text-left flex flex-col items-center md:items-start mx-auto md:mx-0">
             <h1 className="text-3xl md:text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight mb-6 uppercase">
-              Liderazgo Estratégico para el Sector Público
+              Liderazgo de Excelencia para el Sector Público
             </h1>
             <p className="text-base md:text-xl lg:text-2xl text-gray-200 mb-10 font-normal leading-relaxed max-w-2xl px-2 md:px-0">
               Fórmate con la <strong className="text-white font-semibold">Maestría en Administración Pública</strong> del Centro de Postgrados del Estado de México. Prepárate para diseñar, implementar y evaluar políticas que transforman a la sociedad.
@@ -582,22 +599,62 @@ export default function App() {
             MÁS SOBRE ESTE PROGRAMA
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="relative h-80 group cursor-pointer overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800" alt="Metodología" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/50 transition-colors flex items-center justify-center">
-                <span className="text-white font-bold text-xl uppercase tracking-wider">Metodología LMS</span>
+            <div className="relative h-80 group overflow-hidden bg-black">
+              <iframe 
+                className="w-full h-full absolute inset-0 z-0" 
+                src="https://www.youtube.com/embed/fUnrymGVSrg?start=26" 
+                title="Entrevista CPEM"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+              ></iframe>
+              <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/90 to-transparent pointer-events-none z-10">
+                <span className="text-white font-bold text-xl uppercase tracking-wider drop-shadow-md">Entrevista CPEM</span>
               </div>
             </div>
             <div className="relative h-80 group cursor-pointer overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800" alt="Experiencia" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/50 transition-colors flex items-center justify-center p-6 text-center">
-                <span className="text-white font-bold text-xl uppercase tracking-wider">Networking Ejecutivo</span>
+              <img src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/portada-folleto.map.png" alt="Folleto Informativo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/50 transition-colors flex flex-col items-center justify-center p-6 text-center gap-4">
+                <span className="text-white font-bold text-xl uppercase tracking-wider">Folleto Informativo</span>
+                <button className="px-6 py-2 bg-ie-blue text-white text-sm font-bold uppercase tracking-wider hover:bg-white hover:text-ie-blue transition-colors border border-transparent hover:border-ie-blue shadow-md mt-2">
+                  Descargar
+                </button>
               </div>
             </div>
-            <div className="relative h-80 group cursor-pointer overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800" alt="Claustro" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/50 transition-colors flex items-center justify-center p-6 text-center">
-                <span className="text-white font-bold text-xl uppercase tracking-wider">Gestión del Estado</span>
+            <div className="relative h-80 hover:h-[400px] transition-all duration-500 ease-out z-10 group overflow-hidden bg-black cursor-pointer rounded-2xl shadow-xl border border-white/10" onClick={() => setIsPlayingMuestra(true)}>
+              <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=1200" alt="Clase Muestra" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                
+                <div className="relative flex items-center justify-center mb-8">
+                  <motion.div 
+                    animate={{ scale: [1, 1.8, 2.5], opacity: [0.5, 0.2, 0] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute w-20 h-20 bg-ie-blue rounded-full"
+                  />
+                  <motion.div 
+                    animate={{ scale: [1, 2], opacity: [0.4, 0] }}
+                    transition={{ duration: 2.5, delay: 0.8, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute w-20 h-20 bg-ie-blue rounded-full"
+                  />
+                  <motion.div 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative w-24 h-24 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)] border border-white/30 z-10 group-hover:bg-ie-blue transition-colors duration-500"
+                  >
+                    <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-2"></div>
+                  </motion.div>
+                </div>
+
+                <motion.h3 
+                  className="text-white font-black text-3xl md:text-4xl uppercase tracking-widest drop-shadow-2xl mb-3"
+                >
+                  Ver Clase Muestra
+                </motion.h3>
+                <div className="bg-white/10 backdrop-blur border border-white/20 px-6 py-2 rounded-full">
+                  <p className="text-white text-xs font-bold tracking-[0.2em] uppercase flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                    Haz clic para reproducir
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -614,7 +671,7 @@ export default function App() {
               className="px-10 py-4 bg-white text-ie-blue text-base font-bold uppercase tracking-wide hover:bg-gray-100 transition-colors shadow-lg"
               onClick={() => setIsModalOpen(true)}
             >
-              Solicita información
+              Solicita Admisión Hoy
             </button>
          </div>
       </section>
@@ -695,6 +752,76 @@ export default function App() {
           </span>
         </button>
       </div>
+
+      {/* Video Modal (Clase Muestra) */}
+      <AnimatePresence>
+        {isPlayingMuestra && (
+          <div className="fixed inset-0 z-[200] bg-black flex items-center justify-center p-0 md:p-8">
+            <button 
+              onClick={() => {
+                setIsPlayingMuestra(false);
+                setIsVideoFormRequired(false);
+              }}
+              className="absolute top-4 right-4 md:top-8 md:right-8 z-[210] p-2 bg-black/50 hover:bg-black/80 rounded-full text-white transition-colors"
+            >
+              <X className="w-8 h-8" />
+            </button>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full h-full md:max-w-6xl md:max-h-[80vh] bg-black md:rounded-2xl overflow-hidden relative"
+            >
+              <iframe 
+                ref={iframeRef}
+                className="w-full h-full absolute inset-0" 
+                src="https://www.youtube.com/embed/ljNg3_iLNps?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&fs=0&iv_load_policy=3&enablejsapi=1" 
+                title="Clase Muestra"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+              ></iframe>
+
+              <AnimatePresence>
+                {isVideoFormRequired && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 z-[220] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+                  >
+                    <div className="bg-white/60 backdrop-blur-xl border border-white/20 p-8 rounded-2xl w-full max-w-md shadow-2xl text-gray-900">
+                      <h3 className="text-2xl font-bold mb-2 tracking-tight">Continúa viendo la clase</h3>
+                      <p className="text-gray-800 mb-6 text-sm font-medium">Completa estos datos para quitar este mensaje de la pantalla.</p>
+                      
+                      <form className="space-y-5" onSubmit={(e) => {
+                        e.preventDefault();
+                        setIsVideoFormSubmitted(true);
+                        setIsVideoFormRequired(false);
+                      }}>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Nombre completo</label>
+                          <input type="text" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="Ej. Juan Pérez" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Correo electrónico</label>
+                          <input type="email" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="juan@correo.com" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Teléfono / Celular</label>
+                          <input type="tel" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="55 1234 5678" />
+                        </div>
+                        <button type="submit" className="w-full py-3.5 bg-ie-blue text-white rounded-xl font-bold hover:bg-ie-dark transition-colors uppercase tracking-wide text-sm mt-6">
+                          Enviar y Continuar
+                        </button>
+                      </form>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Floating Registration Modal */}
       <AnimatePresence>
