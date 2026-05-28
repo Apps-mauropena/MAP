@@ -78,17 +78,322 @@ const curriculumData = [
   }
 ];
 
+const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const [modo, setModo] = useState('WhatsApp');
+  const [nombre, setNombre] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  // Close when pressing Esc
+  React.useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  const getHeadContent = () => {
+    if (modo === 'WhatsApp') {
+      return {
+        title: 'Conversemos por WhatsApp',
+        desc: 'Compártanos su número y un representante de la Dirección de Vinculación del CPEM se comunicará con usted para presentarle nuestra propuesta de colaboración académica e institucional.',
+        btn: 'SOLICITAR POR WHATSAPP'
+      };
+    } else if (modo === 'Llamada telefónica') {
+      return {
+        title: 'Agende una llamada de 15 minutos',
+        desc: 'Seleccione el día y horario de su preferencia. La Dirección de Vinculación del CPEM le presentará las oportunidades de convenio y colaboración institucional para hospitales, clínicas y organizaciones del sector salud.',
+        btn: 'AGENDAR LLAMADA DE 15 MIN'
+      };
+    } else {
+      return {
+        title: 'Agende una sesión virtual por Zoom de 20 a 30 minutos',
+        desc: 'Indique el horario que mejor se adapte a su agenda. Le enviaremos el acceso a la videollamada para presentarle nuestra propuesta de alianza estratégica y vinculación académica institucional.',
+        btn: 'AGENDAR SESIÓN POR ZOOM'
+      };
+    }
+  };
+
+  const content = getHeadContent();
+
+  const getSuccessMessage = () => {
+    if (modo === 'WhatsApp') {
+      return <>Gracias, <b className="font-semibold text-[#16223b]">{nombre}</b>. Un representante de la Dirección de Vinculación del CPEM se comunicará con usted por <b className="font-semibold text-[#16223b]">WhatsApp</b> para presentarle nuestra propuesta de colaboración académica e institucional.</>;
+    } else {
+      const dur = modo === 'Videollamada por Zoom' ? 'de 20 a 30 minutos' : 'de 15 minutos';
+      const fechaFmt = fecha ? new Date(fecha + 'T00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+      return <>Gracias, <b className="font-semibold text-[#16223b]">{nombre}</b>. Su sesión {dur} por <b className="font-semibold text-[#16223b]">{modo}</b> con la Dirección de Vinculación del CPEM queda solicitada para el <b className="font-semibold text-[#16223b]">{fechaFmt}</b> de <b className="font-semibold text-[#16223b]">{hora}</b>. Le confirmaremos los detalles a la brevedad.</>;
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[#16223b]/60 backdrop-blur-sm overflow-y-auto">
+      <div 
+        className="relative w-full max-w-[460px] bg-white rounded-[22px] shadow-[0_1px_2px_rgba(15,38,69,0.05),_0_20px_50px_-18px_rgba(15,38,69,0.22)] overflow-hidden my-auto"
+        onClick={e => e.stopPropagation()}
+        style={{ fontFamily: "'Outfit', sans-serif" }}
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white hover:text-white/80 z-10 p-2"
+          aria-label="Cerrar modal"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+        <div className="bg-gradient-to-br from-[#0f2645] to-[#16335c] text-white pt-8 pb-7 px-9 relative overflow-hidden">
+          <div className="absolute -right-[50px] -top-[50px] w-[190px] h-[190px] border border-white/10 rounded-full pointer-events-none"></div>
+          <div className="flex items-center gap-[11px] mb-5 relative">
+            <div className="w-[42px] h-[42px] rounded-[10px] bg-white/10 border border-white/20 flex items-center justify-center font-serif font-semibold text-[15px] tracking-wider">
+              CPEM
+            </div>
+            <div>
+              <strong className="block text-[12.5px] font-semibold leading-tight">Centro de Postgrados del Estado de México</strong>
+              <span className="text-[11px] opacity-80">Dirección de Vinculación Institucional</span>
+            </div>
+          </div>
+          <h2 className="font-serif font-medium text-2xl leading-[1.22] tracking-tight mb-2 relative transition-all duration-300">
+            {content.title}
+          </h2>
+          <p className="text-[13.5px] leading-[1.55] opacity-90 relative transition-all duration-300">
+            {content.desc}
+          </p>
+        </div>
+
+        <div className="p-7 px-9">
+          {!submitted ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">¿Cómo prefiere que le contactemos?</label>
+                <div className="grid grid-cols-3 gap-[9px]">
+                  {/* WhatsApp Option */}
+                  <div className="relative">
+                    <input 
+                      type="radio" 
+                      name="modo" 
+                      id="mwa" 
+                      value="WhatsApp" 
+                      checked={modo === 'WhatsApp'} 
+                      onChange={(e) => setModo(e.target.value)} 
+                      className="absolute opacity-0 inset-0 cursor-pointer peer z-10" 
+                    />
+                    <label 
+                      htmlFor="mwa" 
+                      className={`m-0 cursor-pointer text-center rounded-[13px] pt-[14px] pb-3 px-1 flex flex-col items-center gap-2 transition-all duration-200 border-[1.5px] ${modo === 'WhatsApp' ? 'border-[#25d366] bg-[#e6f9ee]' : 'border-[#e3e8f0]'}`}
+                    >
+                      <div className={`w-7 h-7 flex items-center justify-center transition-colors duration-200 ${modo === 'WhatsApp' ? 'text-[#25d366]' : 'text-[#56607a]'}`}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[21px] h-[21px]">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/>
+                        </svg>
+                      </div>
+                      <span className="text-[12px] font-semibold text-[#16223b]">WhatsApp</span>
+                    </label>
+                  </div>
+                  {/* Llamada Option */}
+                  <div className="relative">
+                    <input 
+                      type="radio" 
+                      name="modo" 
+                      id="mtel" 
+                      value="Llamada telefónica" 
+                      checked={modo === 'Llamada telefónica'} 
+                      onChange={(e) => setModo(e.target.value)} 
+                      className="absolute opacity-0 inset-0 cursor-pointer peer z-10" 
+                    />
+                    <label 
+                      htmlFor="mtel" 
+                      className={`m-0 cursor-pointer text-center rounded-[13px] pt-[14px] pb-3 px-1 flex flex-col items-center gap-2 transition-all duration-200 border-[1.5px] ${modo === 'Llamada telefónica' ? 'border-[#16335c] bg-[#e9eff8]' : 'border-[#e3e8f0]'}`}
+                    >
+                      <div className={`w-7 h-7 flex items-center justify-center transition-colors duration-200 ${modo === 'Llamada telefónica' ? 'text-[#16335c]' : 'text-[#56607a]'}`}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[21px] h-[21px]">
+                          <path d="M13 2a9 9 0 0 1 9 9M13 6a5 5 0 0 1 5 5M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/>
+                        </svg>
+                      </div>
+                      <span className="text-[12px] font-semibold text-[#16223b]">Llamada</span>
+                    </label>
+                  </div>
+                  {/* Zoom Option */}
+                  <div className="relative">
+                    <input 
+                      type="radio" 
+                      name="modo" 
+                      id="mzoom" 
+                      value="Videollamada por Zoom" 
+                      checked={modo === 'Videollamada por Zoom'} 
+                      onChange={(e) => setModo(e.target.value)} 
+                      className="absolute opacity-0 inset-0 cursor-pointer peer z-10" 
+                    />
+                    <label 
+                      htmlFor="mzoom" 
+                      className={`m-0 cursor-pointer text-center rounded-[13px] pt-[14px] pb-3 px-1 flex flex-col items-center gap-2 transition-all duration-200 border-[1.5px] ${modo === 'Videollamada por Zoom' ? 'border-[#16335c] bg-[#e9eff8]' : 'border-[#e3e8f0]'}`}
+                    >
+                      <div className={`w-7 h-7 flex items-center justify-center transition-colors duration-200 ${modo === 'Videollamada por Zoom' ? 'text-[#16335c]' : 'text-[#56607a]'}`}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[21px] h-[21px]">
+                          <path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/>
+                        </svg>
+                      </div>
+                      <span className="text-[12px] font-semibold text-[#16223b]">Zoom</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Nombre y cargo</label>
+                <input 
+                  type="text" 
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Ej. Dra. María González, Directora Médica" 
+                  className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
+                  required 
+                />
+              </div>
+
+              {modo === 'WhatsApp' && (
+                <div>
+                  <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Número de WhatsApp</label>
+                  <input 
+                    type="tel" 
+                    placeholder="+52 1 ..."
+                    className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
+                    required 
+                  />
+                </div>
+              )}
+
+              {modo === 'Llamada telefónica' && (
+                <div>
+                  <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Teléfono de contacto</label>
+                  <input 
+                    type="tel" 
+                    placeholder="+52 ..."
+                    className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
+                    required 
+                  />
+                </div>
+              )}
+
+              {modo === 'Videollamada por Zoom' && (
+                <div>
+                  <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Correo electrónico</label>
+                  <input 
+                    type="email" 
+                    placeholder="nombre@institucion.mx"
+                    className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
+                    required 
+                  />
+                </div>
+              )}
+
+              {(modo === 'Llamada telefónica' || modo === 'Videollamada por Zoom') && (
+                <div>
+                  <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Día y horario de su preferencia</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <input 
+                      type="date" 
+                      value={fecha}
+                      onChange={(e) => setFecha(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
+                      required 
+                    />
+                    <select 
+                      value={hora}
+                      onChange={(e) => setHora(e.target.value)}
+                      className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all"
+                      required
+                    >
+                      <option value="" disabled>Horario</option>
+                      <option>09:00 – 10:00</option>
+                      <option>10:00 – 11:00</option>
+                      <option>11:00 – 12:00</option>
+                      <option>12:00 – 13:00</option>
+                      <option>13:00 – 14:00</option>
+                      <option>14:00 – 15:00</option>
+                      <option>15:00 – 16:00</option>
+                      <option>16:00 – 17:00</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              <button 
+                type="submit" 
+                className="w-full text-[14.5px] font-semibold text-white bg-[#16335c] border-none rounded-[11px] p-[15px] cursor-pointer mt-2 tracking-[0.03em] transition-all hover:bg-[#0f2645] active:scale-95"
+              >
+                {content.btn}
+              </button>
+
+              <div className="flex items-center justify-center gap-[7px] mt-4 text-[11.5px] text-[#56607a]">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[13px] h-[13px]">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Sus datos son confidenciales · RVOE SEP 20180199
+              </div>
+            </form>
+          ) : (
+            <div className="text-center py-2 animate-[rise_0.5s_cubic-bezier(0.16,1,0.3,1)_both]">
+              <div className="w-[60px] h-[60px] mx-auto mb-[20px] rounded-full bg-[#e9f9ef] text-[#16a34a] flex items-center justify-center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-[28px] h-[28px]">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+              </div>
+              <h2 className="font-serif font-medium text-[22px] mb-[9px] text-[#16223b]">Solicitud recibida</h2>
+              <p className="text-[14px] text-[#56607a] leading-[1.6]">
+                {getSuccessMessage()}
+              </p>
+              <div className="mt-[22px] pt-5 border-t border-[#e3e8f0] text-[12.5px] text-[#56607a] leading-[1.5]">
+                <b className="text-[#16223b]">Dr. Jorge Zaldívar Vázquez</b> · Director General<br />
+                Centro de Postgrados del Estado de México — CPEM<br />
+                info@postgradoscpem.mx · postgradoscpem.mx
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState(1);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAlianzasModalOpen, setIsAlianzasModalOpen] = useState(false);
+  const [isVinculacionesModalOpen, setIsVinculacionesModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const [isPlayingMuestra, setIsPlayingMuestra] = useState(false);
   const [isVideoFormRequired, setIsVideoFormRequired] = useState(false);
   const [isVideoFormSubmitted, setIsVideoFormSubmitted] = useState(false);
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
+
+  React.useEffect(() => {
+    if (window.location.hash === '#vinculaciones' || window.location.search.includes('vinculaciones')) {
+      setIsVinculacionesModalOpen(true);
+    }
+  }, []);
+
+  const isStandaloneVinculaciones = window.location.hash === '#vinculaciones' || window.location.search.includes('vinculaciones');
+
+  if (isStandaloneVinculaciones) {
+    return (
+      <div className="min-h-screen bg-[#f5f7fb] flex items-center justify-center p-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <VinculacionesModal isOpen={true} onClose={() => window.location.href = '/'} />
+      </div>
+    );
+  }
 
   React.useEffect(() => {
     let timer: number;
@@ -103,11 +408,47 @@ export default function App() {
     };
   }, [isPlayingMuestra, isVideoFormSubmitted]);
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    setActiveSection(sectionId);
+    setIsMobileMenuOpen(false);
+    
+    if (sectionId === 'plan-de-estudios') {
+      setActiveTab(1); // Ensure Primer Cuatrimestre is active
+      
+      // We want to scroll directly to the panel content for Primer Cuatrimestre
+      setTimeout(() => {
+        const targetElement = document.getElementById('ancla-primer-cuatrimestre');
+        if (targetElement) {
+          const headerOffset = 150;
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
+      }, 50);
+      return; // Exit early since we handle scrolling here
+    }
+
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 120; // Exact match for sticky header height + padding
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
   React.useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
 
-      const sections = ['institucion', 'proposito', 'plan', 'metodologia', 'admision'];
+      const sections = ['institucion', 'proposito', 'plan', 'plan-de-estudios', 'metodologia', 'admision'];
       let currentSection = '';
       
       for (const section of sections) {
@@ -134,7 +475,7 @@ export default function App() {
       {/* Top Header Row */}
       <header className={`transition-all duration-300 sticky top-0 z-50 border-b ${isScrolled ? 'bg-white/80 backdrop-blur-lg border-transparent shadow-sm' : 'bg-white border-gray-100'}`}>
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-[66px] md:h-24 flex items-center justify-between">
-          <div className="flex items-center space-x-[20px] md:space-x-8 cursor-pointer">
+          <div className="flex items-center space-x-[20px] md:space-x-8 cursor-pointer" onClick={(e) => scrollToSection(e as any, 'institucion')}>
             <div 
               className={`bg-ie-blue transition-all duration-300 flex-shrink-0 ${isScrolled ? 'h-9 w-28 md:h-14 md:w-48' : 'h-11 w-36 md:h-16 md:w-56'}`}
               style={{
@@ -165,16 +506,13 @@ export default function App() {
 
           <div className="flex items-center space-x-4 lg:space-x-8 flex-shrink-0 md:relative md:left-[30px]">
             <nav className="hidden lg:flex items-center space-x-3 xl:space-x-4 text-[10px] xl:text-xs font-bold tracking-widest text-gray-600 uppercase border-r border-gray-200 pr-4 xl:pr-8">
-              <a href="#institucion" onClick={() => setActiveSection('institucion')} className={`hover:text-ie-blue transition-colors ${activeSection === 'institucion' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>La Institución</a>
-              <a href="#proposito" onClick={() => setActiveSection('proposito')} className={`hover:text-ie-blue transition-colors ${activeSection === 'proposito' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Nuestro Propósito</a>
-              <a href="#plan" onClick={() => setActiveSection('plan')} className={`hover:text-ie-blue transition-colors ${activeSection === 'plan' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Maestría</a>
-              <a href="#metodologia" onClick={() => setActiveSection('metodologia')} className={`hover:text-ie-blue transition-colors ${activeSection === 'metodologia' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Metodología</a>
-              <a href="#admision" onClick={() => setActiveSection('admision')} className={`hover:text-ie-blue transition-colors ${activeSection === 'admision' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Admisiones</a>
+              <a href="#institucion" onClick={(e) => scrollToSection(e, 'institucion')} className={`hover:text-ie-blue transition-colors ${activeSection === 'institucion' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>La Institución</a>
+              <a href="#proposito" onClick={(e) => scrollToSection(e, 'proposito')} className={`hover:text-ie-blue transition-colors ${activeSection === 'proposito' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Nuestro Propósito</a>
+              <a href="#plan-de-estudios" onClick={(e) => scrollToSection(e, 'plan-de-estudios')} className={`hover:text-ie-blue transition-colors ${activeSection === 'plan-de-estudios' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Plan de Estudios</a>
+              <a href="#admision" onClick={(e) => scrollToSection(e, 'admision')} className={`hover:text-ie-blue transition-colors ${activeSection === 'admision' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Admisiones</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); setIsAlianzasModalOpen(true); }} className="hover:text-ie-blue transition-colors pb-1 border-b-2 border-transparent">Alianzas Corporativas</a>
             </nav>
             <div className="flex items-center space-x-2 xl:space-x-3">
-              <button className="hidden md:block px-5 py-2 border border-gray-300 text-xs font-semibold tracking-wide hover:bg-gray-50 transition-colors uppercase">
-                Descargar Folleto
-              </button>
               <button 
                 className="hidden md:block px-5 py-2 bg-ie-blue text-white text-xs font-semibold tracking-wide hover:bg-ie-blue-dark transition-colors uppercase shadow-sm"
                 onClick={() => setIsModalOpen(true)}
@@ -203,21 +541,21 @@ export default function App() {
               <div className="flex flex-col py-6 px-6 space-y-6">
                 <motion.a 
                   initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-                  href="#institucion" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={() => setIsMobileMenuOpen(false)}>La Institución</motion.a>
+                  href="#institucion" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => scrollToSection(e, 'institucion')}>La Institución</motion.a>
                 <motion.a 
                    initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.15 }}
-                   href="#proposito" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={() => setIsMobileMenuOpen(false)}>Nuestro Propósito</motion.a>
+                   href="#proposito" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => scrollToSection(e, 'proposito')}>Nuestro Propósito</motion.a>
                 <motion.a 
-                   initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }}
-                   href="#plan" className="text-lg font-bold tracking-widest text-ie-blue uppercase" onClick={() => setIsMobileMenuOpen(false)}>Maestría</motion.a>
-                <motion.a 
-                   initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.25 }}
-                   href="#metodologia" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={() => setIsMobileMenuOpen(false)}>Metodología</motion.a>
+                   initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.22 }}
+                   href="#plan-de-estudios" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => scrollToSection(e, 'plan-de-estudios')}>Plan de Estudios</motion.a>
                 <motion.a 
                     initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }}
-                    href="#admision" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={() => setIsMobileMenuOpen(false)}>Admisiones</motion.a>
+                    href="#admision" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => scrollToSection(e, 'admision')}>Admisiones</motion.a>
+                <motion.a 
+                    initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.35 }}
+                    href="#" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => { e.preventDefault(); setIsAlianzasModalOpen(true); setIsMobileMenuOpen(false); }}>Alianzas Corporativas</motion.a>
                 
-                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }} className="pt-6 mt-2 border-t border-gray-100 flex flex-col gap-4">
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="pt-6 mt-2 border-t border-gray-100 flex flex-col gap-4">
                   <div className="flex justify-center space-x-8 py-2 mb-2">
                     <a href="#" className="text-ie-blue hover:text-ie-blue transition-all duration-300 relative group" aria-label="Facebook">
                       <FacebookIconFilled className="w-7 h-7 mx-auto" />
@@ -276,13 +614,18 @@ export default function App() {
             <p className="text-base md:text-xl lg:text-2xl text-gray-200 mb-10 font-normal leading-relaxed max-w-2xl px-2 md:px-0">
               Fórmate con la <strong className="text-white font-semibold">Maestría en Administración Pública</strong> del Centro de Postgrados del Estado de México. Prepárate para diseñar, implementar y evaluar políticas que transforman a la sociedad.
             </p>
-            <div className="flex gap-4 w-full sm:w-auto mb-5 md:mb-0">
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-5 md:mb-0">
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="group relative w-full sm:w-auto px-8 py-4 bg-ie-blue text-white text-sm md:text-base font-bold uppercase tracking-wider transition-all border border-transparent overflow-hidden"
               >
                 <div className="absolute inset-0 bg-ie-gold translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></div>
                 <span className="relative z-10">Inicia tu proceso</span>
+              </button>
+              <button 
+                className="group relative w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-ie-blue text-sm md:text-base font-bold uppercase tracking-wider transition-all border border-white backdrop-blur-sm"
+              >
+                Descargar Folleto
               </button>
             </div>
           </div>
@@ -425,7 +768,7 @@ export default function App() {
           </div>
 
           {/* Interactive Curriculum Tabs */}
-          <div className="flex flex-col lg:flex-row gap-4 lg:gap-12">
+          <div id="plan-de-estudios" className="flex flex-col lg:flex-row gap-4 lg:gap-12 scroll-m-[100px]">
             {/* Desktop Tab Selectors */}
             <div className="hidden lg:flex lg:w-1/4 flex-col gap-2 relative z-10" role="tablist">
               {curriculumData.map((term, index) => (
@@ -512,7 +855,7 @@ export default function App() {
 
                   {/* Panel Content */}
                   <div className={`transition-opacity duration-500 ${activeTab === term.id ? 'block opacity-100 mt-4 lg:mt-0' : 'hidden opacity-0'}`}>
-                    <div className="bg-[#f8f9fa] border-l-4 border-ie-blue p-8 mb-8">
+                    <div id={term.id === 1 ? 'ancla-primer-cuatrimestre' : undefined} className="bg-[#f8f9fa] border-l-4 border-ie-blue p-8 mb-8">
                       <h3 className="text-2xl font-bold uppercase text-gray-900 mb-2">{term.title}</h3>
                       <p className="text-gray-600">Consolida tus habilidades directivas a través de estas unidades de competencia intensivas.</p>
                     </div>
@@ -671,7 +1014,7 @@ export default function App() {
               className="px-10 py-4 bg-white text-ie-blue text-base font-bold uppercase tracking-wide hover:bg-gray-100 transition-colors shadow-lg"
               onClick={() => setIsModalOpen(true)}
             >
-             Solicita más información
+              Solicita Admisión Hoy
             </button>
          </div>
       </section>
@@ -702,6 +1045,7 @@ export default function App() {
             <ul className="space-y-4 text-sm text-gray-300">
               <li><a href="#" className="hover:text-white transition-colors">Proceso de Admisión</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Becas y Convenios</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); setIsVinculacionesModalOpen(true); }} className="hover:text-white transition-colors">Vinculaciones CPEM</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Asesoría Personalizada</a></li>
             </ul>
           </div>
@@ -992,6 +1336,157 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Alianzas Corporativas Modal */}
+      <AnimatePresence>
+        {isAlianzasModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10 bg-gray-900/60 backdrop-blur-sm overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white max-w-[1150px] w-full rounded-[30px] shadow-[0_20px_60px_rgba(16,37,68,0.15)] relative overflow-hidden flex flex-col md:flex-row my-auto"
+            >
+              <button 
+                onClick={() => setIsAlianzasModalOpen(false)}
+                className="absolute top-4 right-4 md:top-6 md:right-6 text-gray-400 hover:text-[#172033] z-50 bg-white/80 backdrop-blur border border-gray-200 md:border-transparent md:bg-transparent rounded-full p-2 transition-colors"
+                aria-label="Cerrar modal"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              {/* Left Column */}
+              <div className="relative bg-gradient-to-br from-ie-blue to-ie-blue-dark p-10 md:p-[70px_60px] text-white overflow-hidden md:w-[55%] shrink-0">
+                {/* Decorative circles */}
+                <div className="absolute w-[500px] h-[500px] border border-white/10 rounded-full -right-[220px] -top-[180px] pointer-events-none"></div>
+                
+                <div className="flex items-center gap-3 mb-[60px] relative z-10">
+                  <div>
+                    <h4 className="text-[14px] font-semibold mb-1">Centro de Postgrados del Estado de México</h4>
+                    <p className="text-[12px] opacity-75">Dirección de Vinculación Institucional</p>
+                  </div>
+                </div>
+
+                <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/10 border border-white/10 text-xs mb-7 relative z-10">
+                  Convenios
+                </div>
+
+                <h2 className="font-serif text-4xl md:text-[52px] leading-[1.05] font-medium mb-6 tracking-tight relative z-10">
+                  Fortalezcamos una alianza institucional
+                </h2>
+
+                <p className="text-[16px] leading-[1.8] opacity-90 max-w-[520px] relative z-10 font-light">
+                  Más de 25 años formando líderes en México. La Dirección de Vinculación Institucional del CPEM le presentará nuestras oportunidades de colaboración académica, capacitación y convenios estratégicos para hospitales, clínicas y organizaciones del sector salud.
+                </p>
+
+                <div className="mt-12 grid gap-5 relative z-10">
+                  <div className="flex gap-3.5 items-start">
+                    <div className="min-w-[34px] w-[34px] h-[34px] rounded-full bg-white/10 flex items-center justify-center text-sm">✓</div>
+                    <div>
+                      <strong className="block text-[15px] mb-1 font-semibold">Atención personalizada</strong>
+                      <span className="text-[13px] opacity-75 leading-relaxed block font-light">Seguimiento institucional por parte de nuestro equipo de vinculación académica.</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-3.5 items-start">
+                    <div className="min-w-[34px] w-[34px] h-[34px] rounded-full bg-white/10 flex items-center justify-center text-sm">✓</div>
+                    <div>
+                      <strong className="block text-[15px] mb-1 font-semibold">Convenios académicos</strong>
+                      <span className="text-[13px] opacity-75 leading-relaxed block font-light">Propuestas de capacitación, beneficios institucionales y programas de posgrado.</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-3.5 items-start">
+                    <div className="min-w-[34px] w-[34px] h-[34px] rounded-full bg-white/10 flex items-center justify-center text-sm">✓</div>
+                    <div>
+                      <strong className="block text-[15px] mb-1 font-semibold">Información confidencial</strong>
+                      <span className="text-[13px] opacity-75 leading-relaxed block font-light">Todos los datos compartidos son tratados de manera segura y profesional.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="p-8 md:p-[60px_50px] bg-white w-full">
+                <div className="mb-8">
+                  <h3 className="font-serif text-[32px] font-medium mb-3 tracking-tight text-gray-900">Agendar reunión institucional</h3>
+                  <p className="text-[15px] leading-relaxed text-gray-600">
+                    Seleccione el medio de atención que mejor se adapte a su agenda.
+                  </p>
+                </div>
+
+                <div className="grid gap-3.5 mb-7">
+                  {/* Option 1 */}
+                  <label className="border-2 border-ie-blue bg-blue-50 rounded-2xl p-5 cursor-pointer flex flex-col transition-all hover:-translate-y-0.5 shadow-[0_10px_30px_rgba(0,24,90,0.08)]">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <strong className="block text-[15px] font-semibold text-gray-900">WhatsApp institucional</strong>
+                      <input type="radio" name="reunion_tipo" defaultChecked className="w-4 h-4 text-ie-blue focus:ring-ie-blue border-gray-300" />
+                    </div>
+                    <span className="text-[13px] leading-relaxed text-gray-600">Primer acercamiento rápido y personalizado con la Dirección de Vinculación.</span>
+                  </label>
+                  
+                  {/* Option 2 */}
+                  <label className="border border-gray-200 rounded-2xl p-5 cursor-pointer flex flex-col transition-all hover:-translate-y-0.5 hover:border-ie-blue hover:shadow-[0_10px_30px_rgba(0,24,90,0.08)]">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <strong className="block text-[15px] font-semibold text-gray-900">Llamada ejecutiva · 15 minutos</strong>
+                      <input type="radio" name="reunion_tipo" className="w-4 h-4 text-ie-blue focus:ring-ie-blue border-gray-300" />
+                    </div>
+                    <span className="text-[13px] leading-relaxed text-gray-600">Ideal para conocer oportunidades de colaboración y resolver dudas iniciales.</span>
+                  </label>
+
+                  {/* Option 3 */}
+                  <label className="border border-gray-200 rounded-2xl p-5 cursor-pointer flex flex-col transition-all hover:-translate-y-0.5 hover:border-ie-blue hover:shadow-[0_10px_30px_rgba(0,24,90,0.08)]">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <strong className="block text-[15px] font-semibold text-gray-900">Sesión virtual por Zoom · 20 a 30 minutos</strong>
+                      <input type="radio" name="reunion_tipo" className="w-4 h-4 text-ie-blue focus:ring-ie-blue border-gray-300" />
+                    </div>
+                    <span className="text-[13px] leading-relaxed text-gray-600">Presentación institucional completa sobre convenios, beneficios y alianzas estratégicas.</span>
+                  </label>
+                </div>
+
+                <div className="grid gap-4">
+                  <input type="text" placeholder="Nombre completo" className="w-full p-[16px_18px] rounded-2xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-4 focus:ring-ie-blue/10 focus:bg-white transition-all text-gray-900" />
+                  <input type="text" placeholder="Cargo institucional" className="w-full p-[16px_18px] rounded-2xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-4 focus:ring-ie-blue/10 focus:bg-white transition-all text-gray-900" />
+                  <input type="text" placeholder="Hospital o institución" className="w-full p-[16px_18px] rounded-2xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-4 focus:ring-ie-blue/10 focus:bg-white transition-all text-gray-900" />
+                  <input type="email" placeholder="Correo institucional" className="w-full p-[16px_18px] rounded-2xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-4 focus:ring-ie-blue/10 focus:bg-white transition-all text-gray-900" />
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="tel" placeholder="WhatsApp o teléfono" className="w-full p-[16px_18px] rounded-2xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-4 focus:ring-ie-blue/10 focus:bg-white transition-all text-gray-900" />
+                    <select className="w-full p-[16px_18px] rounded-2xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-4 focus:ring-ie-blue/10 focus:bg-white transition-all text-gray-900 cursor-pointer">
+                      <option>Seleccione un horario</option>
+                      <option>09:00 – 10:00</option>
+                      <option>10:00 – 11:00</option>
+                      <option>11:00 – 12:00</option>
+                      <option>12:00 – 13:00</option>
+                    </select>
+                  </div>
+
+                  <button className="w-full mt-2 p-[18px] rounded-2xl bg-gradient-to-br from-ie-blue-light to-ie-blue text-white font-semibold text-[14px] tracking-wide hover:-translate-y-0.5 hover:shadow-[0_15px_30px_rgba(0,24,90,0.18)] transition-all uppercase">
+                    Agendar reunión institucional
+                  </button>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-gray-200 grid gap-2.5">
+                  <div className="text-[13px] text-gray-600 flex items-center gap-2">
+                    <span className="text-ie-blue font-bold">✔</span> Más de 5,000 egresados en México
+                  </div>
+                  <div className="text-[13px] text-gray-600 flex items-center gap-2">
+                    <span className="text-ie-blue font-bold">✔</span> Institución con validez oficial SEP
+                  </div>
+                  <div className="text-[13px] text-gray-600 flex items-center gap-2">
+                    <span className="text-ie-blue font-bold">✔</span> Respuesta institucional en menos de 24 horas
+                  </div>
+                </div>
+
+                <div className="mt-4 text-[12px] text-gray-400 leading-relaxed">
+                  Centro de Postgrados del Estado de México · Dirección de Vinculación Institucional
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <VinculacionesModal isOpen={isVinculacionesModalOpen} onClose={() => setIsVinculacionesModalOpen(false)} />
     </div>
   );
 }
