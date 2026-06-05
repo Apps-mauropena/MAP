@@ -1,8 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronRight, ArrowRight, BookOpen, Monitor, Award, Building, Globe, Users, Menu, X, Facebook, Youtube, Phone, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Markdown from 'react-markdown';
 import { blogArticlesData } from './blogArticles';
+import { initAuth, googleSignIn, getAccessToken } from './auth';
+import { appendLeadToSheet } from './lib/sheets';
+
+const submitLead = async (formName: string, name: string, email: string, phone: string, extraData: string = '') => {
+  let token = await getAccessToken();
+  if (!token) {
+    const result = await googleSignIn();
+    if (!result) return false;
+  }
+  
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+  
+  let postgradoInfo = 'Maestría en Administración Pública';
+  if (formName) postgradoInfo += ` (${formName})`;
+  if (extraData) postgradoInfo += ` - ${extraData}`;
+
+  await appendLeadToSheet([
+    name,
+    email,
+    phone,
+    postgradoInfo,
+    formattedDateTime
+  ]);
+  return true;
+};
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -85,6 +116,7 @@ const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   const [nombre, setNombre] = useState('');
   const [fecha, setFecha] = useState('');
   const [hora, setHora] = useState('');
+  const [contacto, setContacto] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   // Close when pressing Esc
@@ -98,9 +130,18 @@ const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    const success = await submitLead('Vinculaciones Modal', nombre, '', contacto, `${modo} - Fecha: ${fecha} - Hora: ${hora}`);
+    setIsSubmitting(false);
+    if (success) {
+      setSubmitted(true);
+    } else {
+      alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
+    }
   };
 
   const getHeadContent = () => {
@@ -266,6 +307,8 @@ const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                   <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Número de WhatsApp</label>
                   <input 
                     type="tel" 
+                    value={contacto}
+                    onChange={(e) => setContacto(e.target.value)}
                     placeholder="+52 1 ..."
                     className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
                     required 
@@ -278,6 +321,8 @@ const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                   <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Teléfono de contacto</label>
                   <input 
                     type="tel" 
+                    value={contacto}
+                    onChange={(e) => setContacto(e.target.value)}
                     placeholder="+52 ..."
                     className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
                     required 
@@ -290,6 +335,8 @@ const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                   <label className="block text-[12.5px] font-medium mb-[9px] text-[#16223b]">Correo electrónico</label>
                   <input 
                     type="email" 
+                    value={contacto}
+                    onChange={(e) => setContacto(e.target.value)}
                     placeholder="nombre@institucion.mx"
                     className="w-full text-[15px] text-[#16223b] bg-[#fbfcfe] border border-[#e3e8f0] rounded-[11px] p-[13px_15px] focus:outline-none focus:bg-white focus:border-[#16335c] focus:ring-4 focus:ring-[#16335c]/10 transition-all placeholder:text-[#aab2c2]"
                     required 
@@ -384,7 +431,15 @@ export default function App() {
   const [isHoveringBlog, setIsHoveringBlog] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'articulos'>('home');
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+  const [isPdfFormSubmitted, setIsPdfFormSubmitted] = useState(false);
+  const [isPdfSubmitting, setIsPdfSubmitting] = useState(false);
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const unsubscribe = initAuth();
+    return () => unsubscribe();
+  }, []);
 
   const openArticleList = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -616,7 +671,7 @@ export default function App() {
                       <span className="absolute -bottom-2 left-1/2 w-0 h-0.5 bg-ie-blue transition-all duration-300 group-hover:w-full group-hover:-translate-x-1/2"></span>
                     </a>
                   </div>
-                   <button className="w-full px-6 py-4 border border-gray-300 text-sm font-bold tracking-wide hover:bg-gray-50 transition-colors uppercase">
+                   <button onClick={(e) => { e.preventDefault(); setIsPdfModalOpen(true); }} className="block text-center w-full px-6 py-4 border border-gray-300 text-sm font-bold tracking-wide hover:bg-gray-50 transition-colors uppercase">
                     Descargar Folleto
                    </button>
                    <button 
@@ -675,7 +730,8 @@ export default function App() {
                 <span className="relative z-10">Inicia tu proceso</span>
               </button>
               <button 
-                className="group relative w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-ie-blue text-sm md:text-base font-bold uppercase tracking-wider transition-all border border-white backdrop-blur-sm"
+                onClick={(e) => { e.preventDefault(); setIsPdfModalOpen(true); }}
+                className="group relative flex justify-center items-center w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-ie-blue text-sm md:text-base font-bold uppercase tracking-wider transition-all border border-white backdrop-blur-sm"
               >
                 Descargar Folleto
               </button>
@@ -1038,7 +1094,7 @@ export default function App() {
               <img src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/portada-folleto.map.png" alt="Folleto Informativo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/50 transition-colors flex flex-col items-center justify-center p-6 text-center gap-4">
                 <span className="text-white font-bold text-xl uppercase tracking-wider">Folleto Informativo</span>
-                <button className="px-6 py-2 bg-ie-blue text-white text-sm font-bold uppercase tracking-wider hover:bg-white hover:text-ie-blue transition-colors border border-transparent hover:border-ie-blue shadow-md mt-2">
+                <button onClick={(e) => { e.preventDefault(); setIsPdfModalOpen(true); }} className="inline-block px-6 py-2 bg-ie-blue text-white text-sm font-bold uppercase tracking-wider hover:bg-white hover:text-ie-blue transition-colors border border-transparent hover:border-ie-blue shadow-md mt-2">
                   Descargar
                 </button>
               </div>
@@ -1327,10 +1383,24 @@ export default function App() {
                       <h3 className="text-2xl font-bold mb-2 tracking-tight">Continúa viendo la clase</h3>
                       <p className="text-gray-800 mb-6 text-sm font-medium">Completa estos datos para quitar este mensaje de la pantalla.</p>
                       
-                      <form className="space-y-5" onSubmit={(e) => {
+                      <form className="space-y-5" onSubmit={async (e) => {
                         e.preventDefault();
-                        setIsVideoFormSubmitted(true);
-                        setIsVideoFormRequired(false);
+                        const target = e.target as typeof e.target & {
+                          0: { value: string };
+                          1: { value: string };
+                          2: { value: string };
+                        };
+                        const name = target[0].value;
+                        const email = target[1].value;
+                        const phone = target[2].value;
+                        
+                        const success = await submitLead('Continúa viendo la clase', name, email, phone);
+                        if (success) {
+                          setIsVideoFormSubmitted(true);
+                          setIsVideoFormRequired(false);
+                        } else {
+                          alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
+                        }
                       }}>
                         <div>
                           <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Nombre completo</label>
@@ -1385,7 +1455,24 @@ export default function App() {
                   <span className="text-gray-500 text-xs font-normal">Válido hasta el 30 de mayo.</span>
                 </p>
 
-                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsModalOpen(false); }}>
+                <form className="space-y-4" onSubmit={async (e) => { 
+                  e.preventDefault(); 
+                  const target = e.target as typeof e.target & {
+                    0: { value: string };
+                    1: { value: string };
+                    2: { value: string };
+                  };
+                  const name = target[0].value;
+                  const email = target[1].value;
+                  const phone = target[2].value;
+                  
+                  const success = await submitLead('Inicia tu Proceso', name, email, phone);
+                  if (success) {
+                    setIsModalOpen(false); 
+                  } else {
+                    alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
+                  }
+                }}>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Nombre Completo</label>
                     <input 
@@ -1455,7 +1542,26 @@ export default function App() {
                   telefónica con Admisiones CPEM
                 </p>
 
-                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsPhoneModalOpen(false); }}>
+                <form className="space-y-4" onSubmit={async (e) => { 
+                  e.preventDefault(); 
+                  const target = e.target as typeof e.target & {
+                    0: { value: string };
+                    1: { value: string };
+                    2: { value: string };
+                    3: { value: string };
+                  };
+                  const name = target[0].value;
+                  const phone = target[1].value;
+                  const dia = target[2].value;
+                  const hora = target[3].value;
+                  
+                  const success = await submitLead('Agenda una cita', name, '', phone, `Día: ${dia} - Hora: ${hora}`);
+                  if (success) {
+                    setIsPhoneModalOpen(false); 
+                  } else {
+                    alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
+                  }
+                }}>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">Nombre Completo</label>
                     <input 
@@ -1671,6 +1777,119 @@ export default function App() {
                 </div>
               </div>
 
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isPdfModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 px-6 md:px-0 bg-black/60 backdrop-blur-sm pt-20">
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative"
+            >
+              <button 
+                onClick={() => {
+                  setIsPdfModalOpen(false);
+                  setIsPdfFormSubmitted(false);
+                }}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="p-8 md:p-10 text-center">
+                {!isPdfFormSubmitted ? (
+                  <>
+                    <h3 className="font-serif text-2xl font-bold mb-3 text-gray-900 border-b border-gray-100 pb-4">
+                      Descargar Folleto
+                    </h3>
+                    <p className="text-[14px] text-gray-600 mb-8">
+                      Completa tus datos para recibir el folleto informativo de la Maestría en Administración Pública en tu correo electrónico.
+                    </p>
+
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      const target = e.target as typeof e.target & {
+                        0: { value: string };
+                        1: { value: string };
+                      };
+                      const name = target[0].value;
+                      const email = target[1].value;
+
+                      setIsPdfSubmitting(true);
+                      try {
+                        const success = await submitLead('Descargar Folleto', name, email, '');
+                        if (success) {
+                          setIsPdfFormSubmitted(true);
+                          const link = document.createElement('a');
+                          link.href = '/Folleto_Maestria_CPEM.pdf';
+                          link.download = 'Folleto_Maestria_CPEM.pdf';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        } else {
+                          alert("Cancelado o hubo un error al autenticar.");
+                        }
+                      } catch (err) {
+                        console.error("Error saving lead:", err);
+                        alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
+                      } finally {
+                        setIsPdfSubmitting(false);
+                      }
+                    }} className="flex flex-col gap-4">
+                      <input 
+                        type="text" 
+                        required 
+                        disabled={isPdfSubmitting}
+                        placeholder="Nombre completo" 
+                        className="w-full p-[14px_16px] rounded-xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-2 focus:ring-ie-blue/20 transition-all disabled:opacity-50"
+                      />
+                      <input 
+                        type="email" 
+                        required 
+                        disabled={isPdfSubmitting}
+                        placeholder="Correo electrónico" 
+                        className="w-full p-[14px_16px] rounded-xl border border-gray-200 text-[14px] bg-gray-50 focus:outline-none focus:border-ie-blue focus:ring-2 focus:ring-ie-blue/20 transition-all disabled:opacity-50"
+                      />
+                      <button 
+                        type="submit" 
+                        disabled={isPdfSubmitting}
+                        className="w-full mt-2 p-[16px] rounded-xl bg-ie-blue text-white font-bold tracking-wide hover:bg-ie-blue-dark transition-all uppercase text-[13px] shadow-lg shadow-ie-blue/20 disabled:opacity-50"
+                      >
+                        {isPdfSubmitting ? 'Procesando...' : 'Enviar y Descargar'}
+                      </button>
+                    </form>
+                    <p className="text-[11px] text-gray-400 mt-5">
+                      Tus datos están protegidos y no serán compartidos con terceros. Al hacer clic, autorizas el registro en nuestra base vía Google Sheets con tu cuenta actual.
+                    </p>
+                  </>
+                ) : (
+                  <div className="py-8">
+                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-5">
+                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h3 className="font-serif text-2xl font-bold mb-3 text-gray-900 border-b border-gray-100 pb-4">
+                      ¡Folleto Enviado!
+                    </h3>
+                    <p className="text-[14px] text-gray-600 mb-6">
+                      Hemos enviado el folleto a tu correo electrónico y la descarga ha comenzado automáticamente.
+                    </p>
+                    <button 
+                      onClick={() => {
+                        setIsPdfModalOpen(false);
+                        setIsPdfFormSubmitted(false);
+                      }}
+                      className="w-full p-[14px] rounded-xl bg-gray-100 text-gray-700 font-bold hover:bg-gray-200 transition-colors uppercase text-[12px]"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                )}
+              </div>
             </motion.div>
           </div>
         )}
