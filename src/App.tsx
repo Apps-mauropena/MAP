@@ -1868,7 +1868,8 @@ export default function App() {
                       Tus datos han sido registrados. Haz clic en el botón de abajo para descargar tu folleto.
                     </p>
                     <a 
-                      href="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/Cpem.Maestri%CC%81a%20en%20Administracio%CC%81n%20Pu%CC%81blica.pdf"
+                      href="/Cpem.Maestri%CC%81a%20en%20Administracio%CC%81n%20Pu%CC%81blica.pdf"
+                      download="Cpem.Maestría en Administración Pública.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full inline-flex justify-center items-center gap-2 p-[14px] mb-3 rounded-xl bg-[#00173f] text-white font-bold hover:bg-[#00287a] transition-colors uppercase text-[12px]"
