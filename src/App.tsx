@@ -1826,8 +1826,9 @@ export default function App() {
                         if (success) {
                           setIsPdfFormSubmitted(true);
                           const link = document.createElement('a');
-                          link.href = '/Folleto_Maestria_CPEM.pdf';
+                          link.href = 'https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/Cpem.Maestri%CC%81a%20en%20Administracio%CC%81n%20Pu%CC%81blica.pdf';
                           link.download = 'Folleto_Maestria_CPEM.pdf';
+                          link.target = '_blank';
                           document.body.appendChild(link);
                           link.click();
                           document.body.removeChild(link);
