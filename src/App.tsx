@@ -7,32 +7,38 @@ import { initAuth, googleSignIn, getAccessToken } from './auth';
 import { appendLeadToSheet } from './lib/sheets';
 
 const submitLead = async (formName: string, name: string, email: string, phone: string, extraData: string = '') => {
-  let token = await getAccessToken();
-  if (!token) {
-    const result = await googleSignIn();
-    if (!result) return false;
-  }
-  
-  const now = new Date();
-  const day = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const year = now.getFullYear();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
-  
-  let postgradoInfo = 'Maestría en Administración Pública';
-  if (formName) postgradoInfo += ` (${formName})`;
-  if (extraData) postgradoInfo += ` - ${extraData}`;
+  try {
+    let token = await getAccessToken();
+    if (!token) {
+      const result = await googleSignIn();
+      if (!result) return false;
+    }
+    
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+    
+    let postgradoInfo = 'Maestría en Administración Pública';
+    if (formName) postgradoInfo += ` (${formName})`;
+    if (extraData) postgradoInfo += ` - ${extraData}`;
 
-  await appendLeadToSheet([
-    name,
-    email,
-    phone,
-    postgradoInfo,
-    formattedDateTime
-  ]);
-  return true;
+    await appendLeadToSheet([
+      name,
+      email,
+      phone,
+      postgradoInfo,
+      formattedDateTime
+    ]);
+    return true;
+  } catch (error: any) {
+    console.error("Error inside submitLead:", error);
+    alert("Error de conexión: " + (error.message || "No se pudo autenticar. Verifica tu dominio en Firebase."));
+    return false;
+  }
 };
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -139,8 +145,6 @@ const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     setIsSubmitting(false);
     if (success) {
       setSubmitted(true);
-    } else {
-      alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
     }
   };
 
@@ -1398,8 +1402,6 @@ export default function App() {
                         if (success) {
                           setIsVideoFormSubmitted(true);
                           setIsVideoFormRequired(false);
-                        } else {
-                          alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
                         }
                       }}>
                         <div>
@@ -1469,8 +1471,6 @@ export default function App() {
                   const success = await submitLead('Inicia tu Proceso', name, email, phone);
                   if (success) {
                     setIsModalOpen(false); 
-                  } else {
-                    alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
                   }
                 }}>
                   <div>
@@ -1558,8 +1558,6 @@ export default function App() {
                   const success = await submitLead('Agenda una cita', name, '', phone, `Día: ${dia} - Hora: ${hora}`);
                   if (success) {
                     setIsPhoneModalOpen(false); 
-                  } else {
-                    alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
                   }
                 }}>
                   <div>
@@ -1823,21 +1821,11 @@ export default function App() {
                       setIsPdfSubmitting(true);
                       try {
                         const success = await submitLead('Descargar Folleto', name, email, '');
-                        if (success) {
-                          setIsPdfFormSubmitted(true);
-                          const link = document.createElement('a');
-                          link.href = 'https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/Cpem.Maestri%CC%81a%20en%20Administracio%CC%81n%20Pu%CC%81blica.pdf';
-                          link.download = 'Folleto_Maestria_CPEM.pdf';
-                          link.target = '_blank';
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                        } else {
-                          alert("Cancelado o hubo un error al autenticar.");
-                        }
-                      } catch (err) {
-                        console.error("Error saving lead:", err);
-                        alert("Hubo un error al guardar o autenticar. Por favor revisa e intenta nuevamente.");
+                        
+                        // Siempre permitimos descargar el folleto para no bloquear al usuario final
+                        setIsPdfFormSubmitted(true);
+                      } catch (err: any) {
+                        console.error("Error al procesar el formulario:", err);
                       } finally {
                         setIsPdfSubmitting(false);
                       }
@@ -1874,11 +1862,20 @@ export default function App() {
                       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
                     </div>
                     <h3 className="font-serif text-2xl font-bold mb-3 text-gray-900 border-b border-gray-100 pb-4">
-                      ¡Folleto Enviado!
+                      ¡Registro Exitoso!
                     </h3>
                     <p className="text-[14px] text-gray-600 mb-6">
-                      Hemos enviado el folleto a tu correo electrónico y la descarga ha comenzado automáticamente.
+                      Tus datos han sido registrados. Haz clic en el botón de abajo para descargar tu folleto.
                     </p>
+                    <a 
+                      href="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/Cpem.Maestri%CC%81a%20en%20Administracio%CC%81n%20Pu%CC%81blica.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex justify-center items-center gap-2 p-[14px] mb-3 rounded-xl bg-[#00173f] text-white font-bold hover:bg-[#00287a] transition-colors uppercase text-[12px]"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                      Descargar Folleto Ahora
+                    </a>
                     <button 
                       onClick={() => {
                         setIsPdfModalOpen(false);
