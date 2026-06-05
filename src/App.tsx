@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { ChevronRight, ArrowRight, BookOpen, Monitor, Award, Building, Globe, Users, Menu, X, Facebook, Youtube, Phone } from 'lucide-react';
+import { ChevronRight, ArrowRight, BookOpen, Monitor, Award, Building, Globe, Users, Menu, X, Facebook, Youtube, Phone, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import Markdown from 'react-markdown';
+import { blogArticlesData } from './blogArticles';
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -377,8 +379,28 @@ export default function App() {
   const [isPlayingMuestra, setIsPlayingMuestra] = useState(false);
   const [isVideoFormRequired, setIsVideoFormRequired] = useState(false);
   const [isVideoFormSubmitted, setIsVideoFormSubmitted] = useState(false);
+  const [currentVideoId, setCurrentVideoId] = useState('ljNg3_iLNps');
+  const [currentBlogIndex, setCurrentBlogIndex] = useState(0);
+  const [isHoveringBlog, setIsHoveringBlog] = useState(false);
+  const [currentView, setCurrentView] = useState<'home' | 'articulos'>('home');
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
+  const openArticleList = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    setSelectedArticleId(null);
+    setCurrentView('articulos');
+    setIsMobileMenuOpen(false);
+    window.scrollTo(0, 0);
+  };
+
+  const openArticle = (id: string, e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    setSelectedArticleId(id);
+    setCurrentView('articulos');
+    window.scrollTo(0, 0);
+  };
+  
   React.useEffect(() => {
     if (window.location.hash === '#vinculaciones' || window.location.search.includes('vinculaciones')) {
       setIsVinculacionesModalOpen(true);
@@ -408,8 +430,32 @@ export default function App() {
     };
   }, [isPlayingMuestra, isVideoFormSubmitted]);
 
+  React.useEffect(() => {
+    if (isHoveringBlog) {
+      return;
+    }
+    const blogTimer = window.setInterval(() => {
+      setCurrentBlogIndex((prev) => (prev + 1) % blogArticlesData.length);
+    }, 5000); // rotate every 5 seconds
+    return () => window.clearInterval(blogTimer);
+  }, [isHoveringBlog]);
+
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
+    
+    if (currentView !== 'home') {
+      setCurrentView('home');
+      setTimeout(() => {
+        setActiveSection(sectionId);
+        setIsMobileMenuOpen(false);
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+      return;
+    }
+
     setActiveSection(sectionId);
     setIsMobileMenuOpen(false);
     
@@ -508,8 +554,9 @@ export default function App() {
             <nav className="hidden lg:flex items-center space-x-3 xl:space-x-4 text-[10px] xl:text-xs font-bold tracking-widest text-gray-600 uppercase border-r border-gray-200 pr-4 xl:pr-8">
               <a href="#institucion" onClick={(e) => scrollToSection(e, 'institucion')} className={`hover:text-ie-blue transition-colors ${activeSection === 'institucion' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>La Institución</a>
               <a href="#proposito" onClick={(e) => scrollToSection(e, 'proposito')} className={`hover:text-ie-blue transition-colors ${activeSection === 'proposito' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Nuestro Propósito</a>
-              <a href="#plan-de-estudios" onClick={(e) => scrollToSection(e, 'plan-de-estudios')} className={`hover:text-ie-blue transition-colors ${activeSection === 'plan-de-estudios' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Plan de Estudios</a>
-              <a href="#admision" onClick={(e) => scrollToSection(e, 'admision')} className={`hover:text-ie-blue transition-colors ${activeSection === 'admision' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Admisiones</a>
+              <a href="#plan-de-estudios" onClick={(e) => scrollToSection(e, 'plan-de-estudios')} className={`hover:text-ie-blue transition-colors ${activeSection === 'plan-de-estudios' && currentView === 'home' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Plan de Estudios</a>
+              <a href="#admision" onClick={(e) => scrollToSection(e, 'admision')} className={`hover:text-ie-blue transition-colors ${activeSection === 'admision' && currentView === 'home' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Admisiones</a>
+              <a href="#" onClick={openArticleList} className={`hover:text-ie-blue transition-colors ${currentView === 'articulos' && !selectedArticleId ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Artículos</a>
               <a href="#" onClick={(e) => { e.preventDefault(); setIsAlianzasModalOpen(true); }} className="hover:text-ie-blue transition-colors pb-1 border-b-2 border-transparent">Alianzas Corporativas</a>
             </nav>
             <div className="flex items-center space-x-2 xl:space-x-3">
@@ -551,6 +598,9 @@ export default function App() {
                 <motion.a 
                     initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }}
                     href="#admision" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => scrollToSection(e, 'admision')}>Admisiones</motion.a>
+                <motion.a 
+                    initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.32 }}
+                    href="#" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={openArticleList}>Artículos</motion.a>
                 <motion.a 
                     initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.35 }}
                     href="#" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => { e.preventDefault(); setIsAlianzasModalOpen(true); setIsMobileMenuOpen(false); }}>Alianzas Corporativas</motion.a>
@@ -594,8 +644,10 @@ export default function App() {
         </span>
       </div>
 
-      {/* Hero Section */}
-      <section id="institucion" className="relative w-full overflow-hidden h-[75vh] min-h-[520px] md:h-[80vh] md:min-h-[640px]">
+      {/* HOME VIEW: Hidden when in articulos view */}
+      <div className={currentView === 'home' ? 'block' : 'hidden'}>
+        {/* Hero Section */}
+        <section id="institucion" className="relative w-full overflow-hidden h-[75vh] min-h-[520px] md:h-[80vh] md:min-h-[640px]">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/cara.map.cpem.jpg" 
@@ -942,17 +994,45 @@ export default function App() {
             MÁS SOBRE ESTE PROGRAMA
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="relative h-80 group overflow-hidden bg-black">
-              <iframe 
-                className="w-full h-full absolute inset-0 z-0" 
-                src="https://www.youtube.com/embed/fUnrymGVSrg?start=26" 
-                title="Entrevista CPEM"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen
-              ></iframe>
-              <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/90 to-transparent pointer-events-none z-10">
-                <span className="text-white font-bold text-xl uppercase tracking-wider drop-shadow-md">Entrevista CPEM</span>
-              </div>
+            <div 
+              className="relative h-80 group overflow-hidden bg-black cursor-pointer rounded-2xl shadow-xl"
+              onMouseEnter={() => setIsHoveringBlog(true)}
+              onMouseLeave={() => setIsHoveringBlog(false)}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentBlogIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                  className="absolute inset-0"
+                >
+                  {blogArticlesData[currentBlogIndex].type === 'video' ? (
+                    <div className="w-full h-full relative">
+                      <iframe 
+                        className="w-full h-full absolute inset-0 z-0" 
+                        src={`https://www.youtube.com/embed/${blogArticlesData[currentBlogIndex].videoId}`} 
+                        title={blogArticlesData[currentBlogIndex].title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowFullScreen
+                      ></iframe>
+                      <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/90 to-transparent pointer-events-none z-10">
+                        <span className="text-white font-bold text-xl uppercase tracking-wider drop-shadow-md">{blogArticlesData[currentBlogIndex].title}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <img src={blogArticlesData[currentBlogIndex].image} alt={blogArticlesData[currentBlogIndex].title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent flex flex-col justify-end p-6">
+                        <span className="text-ie-gold text-xs font-bold uppercase tracking-widest mb-2 border-b border-ie-gold/30 pb-2 inline-block w-max">Blog CPEM</span>
+                        <h3 className="text-white font-bold text-lg leading-snug mb-2">{blogArticlesData[currentBlogIndex].title}</h3>
+                        <p className="text-gray-300 text-sm line-clamp-2">{blogArticlesData[currentBlogIndex].description}</p>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
             <div className="relative h-80 group cursor-pointer overflow-hidden">
               <img src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/portada-folleto.map.png" alt="Folleto Informativo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -963,7 +1043,11 @@ export default function App() {
                 </button>
               </div>
             </div>
-            <div className="relative h-80 hover:h-[400px] transition-all duration-500 ease-out z-10 group overflow-hidden bg-black cursor-pointer rounded-2xl shadow-xl border border-white/10" onClick={() => setIsPlayingMuestra(true)}>
+            <div className="relative h-80 hover:h-[400px] transition-all duration-500 ease-out z-10 group overflow-hidden bg-black cursor-pointer rounded-2xl shadow-xl border border-white/10" onClick={() => {
+              const videoIds = ['ljNg3_iLNps', 'NRHP2u7xUPY'];
+              setCurrentVideoId(videoIds[Math.floor(Math.random() * videoIds.length)]);
+              setIsPlayingMuestra(true);
+            }}>
               <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=1200" alt="Clase Muestra" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
               <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                 
@@ -1004,6 +1088,107 @@ export default function App() {
         </div>
       </section>
 
+      </div> {/* END OF HOME VIEW */}
+
+      {/* ARTICULOS VIEW */}
+      <div className={currentView === 'articulos' ? 'block' : 'hidden'}>
+        {!selectedArticleId ? (
+          <>
+            <div className="pt-24 pb-16 bg-[#f8f9fa] border-b border-gray-200">
+              <div className="max-w-[1400px] mx-auto px-6 text-center">
+                <span className="text-ie-blue font-bold tracking-[0.2em] uppercase mb-4 block">Actualidad Académica</span>
+                <h1 className="text-4xl md:text-6xl font-extrabold text-[#000c2e] uppercase tracking-tight mb-6">
+                  Noticias y Artículos
+                </h1>
+                <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                  Explora nuestros análisis profundos, investigaciones y perspectivas sobre políticas públicas, gestión gubernamental y liderazgo en el sector público. Un espacio diseñado para enriquecer tu visión profesional y posicionarte a la vanguardia de la administración pública.
+                </p>
+              </div>
+            </div>
+
+            <section id="blog-content" className="py-20 bg-white min-h-screen">
+              <div className="max-w-[1400px] mx-auto px-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {blogArticlesData.filter(a => a.type === 'blog').map((article, idx) => (
+                  <article key={idx} onClick={(e) => openArticle(article.id!, e)} className="group cursor-pointer flex flex-col items-start bg-gray-50 border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div className="w-full h-48 overflow-hidden relative">
+                      <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <div className="absolute top-4 left-4 bg-ie-blue text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                        Actualidad
+                      </div>
+                    </div>
+                    <div className="p-6 flex flex-col flex-grow w-full">
+                      <header>
+                        <div className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-3">
+                          <span>{new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                          <span>•</span>
+                          <span>Lectura {article.readTime || '5 min'}</span>
+                        </div>
+                        <h3 className="text-gray-900 font-bold text-xl leading-snug mb-3 group-hover:text-ie-blue transition-colors">
+                          {article.title}
+                        </h3>
+                      </header>
+                      <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow">
+                        {article.description}
+                      </p>
+                      <footer className="mt-auto border-t border-gray-200 pt-4 w-full">
+                        <a href="#" onClick={(e) => {e.preventDefault(); openArticle(article.id!)}} className="text-ie-blue font-bold text-sm uppercase tracking-wide group-hover:underline flex items-center gap-2">
+                          Leer artículo <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                      </footer>
+                    </div>
+                  </article>
+                ))}
+            </div>
+          </div>
+        </section>
+          </>
+        ) : (
+          <div className="min-h-screen bg-white">
+            {blogArticlesData.filter(a => a.id === selectedArticleId).map(article => (
+              <article key={article.id} className="pt-24 pb-20">
+                <div className="max-w-4xl mx-auto px-6 mb-12">
+                  <button 
+                    onClick={openArticleList}
+                    className="flex items-center gap-2 text-ie-blue font-bold uppercase tracking-wider text-sm hover:text-[#000c2e] transition-colors mb-8"
+                  >
+                    <ArrowLeft className="w-4 h-4" /> Volver a Artículos
+                  </button>
+                  <div className="flex items-center gap-3 text-sm text-gray-500 font-medium mb-6">
+                    <span className="bg-ie-blue/10 text-ie-blue px-3 py-1 rounded-full uppercase tracking-wider text-xs font-bold">Actualidad</span>
+                    <span>•</span>
+                    <span>{new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    <span>•</span>
+                    <span>Lectura {article.readTime || '5 min'}</span>
+                  </div>
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-8">
+                    {article.title}
+                  </h1>
+                </div>
+                
+                {article.image && (
+                  <div className="w-full h-[400px] md:h-[500px] mb-12">
+                    <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                  </div>
+                )}
+                
+                <div className="max-w-3xl mx-auto px-6">
+                  {article.content ? (
+                    <div className="prose prose-lg prose-blue max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-ie-blue hover:prose-a:text-[#000c2e] prose-img:rounded-xl">
+                      <Markdown>{article.content}</Markdown>
+                    </div>
+                  ) : (
+                    <div className="text-center py-20 text-gray-500">
+                      <p>Contenido del artículo en desarrollo.</p>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </div> {/* END OF ARTICULOS VIEW */}
+
       {/* Powerful CTA full width */}
       <section id="admision" className="bg-ie-blue py-20 text-center">
          <div className="max-w-4xl mx-auto px-6">
@@ -1028,7 +1213,7 @@ export default function App() {
               <li><a href="#" className="hover:text-white transition-colors">La Institución</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Claustro Académico</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Centros de Investigación</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Noticias y Eventos</a></li>
+              <li><a href="#" onClick={openArticleList} className="hover:text-white transition-colors">Artículos y Noticias</a></li>
             </ul>
           </div>
           <div>
@@ -1119,11 +1304,16 @@ export default function App() {
               <iframe 
                 ref={iframeRef}
                 className="w-full h-full absolute inset-0" 
-                src="https://www.youtube.com/embed/ljNg3_iLNps?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&fs=0&iv_load_policy=3&enablejsapi=1" 
+                src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0&fs=0&iv_load_policy=3&enablejsapi=1`} 
                 title="Clase Muestra"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowFullScreen
               ></iframe>
+              
+              {/* Overlay to block the top title which redirects to YouTube */}
+              <div className="absolute top-0 left-0 w-full h-20 z-[190] bg-transparent pointer-events-auto"></div>
+              {/* Overlay to block the YouTube logo on the bottom right */}
+              <div className="absolute bottom-0 right-0 w-[140px] h-[70px] z-[190] bg-transparent pointer-events-auto"></div>
 
               <AnimatePresence>
                 {isVideoFormRequired && (
