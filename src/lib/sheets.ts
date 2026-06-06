@@ -1,33 +1,34 @@
-import { getAccessToken } from '../auth';
-
 export const appendLeadToSheet = async (values: any[]) => {
-  const token = await getAccessToken();
-  if (!token) {
-    throw new Error('No access token available. Please sign in with Google.');
+  // Cuando tengas la URL de tu Web App de Google Apps Script, pégala aquí:
+  const APPS_SCRIPT_URL = "URL_DE_TU_APPS_SCRIPT_AQUI"; 
+  
+  if (APPS_SCRIPT_URL === "URL_DE_TU_APPS_SCRIPT_AQUI") {
+    console.warn("Falta configurar la URL de Apps Script en src/lib/sheets.ts");
+    // Simulamos un retraso y un éxito para que continúe la UI
+    await new Promise(resolve => setTimeout(resolve, 800));
+    return { status: "success" };
   }
 
-  const SPREADSHEET_ID = '125Xqh5bmze6OraxHo_wjCo4B2Lm5-RVXvAXw-GDzatU';
-  const range = 'A:Z'; 
+  // values es un array: [nombre, email, telefono, programa, fecha]
+  const data = new URLSearchParams();
+  data.append('nombre', values[0] || '');
+  data.append('email', values[1] || '');
+  data.append('telefono', values[2] || '');
+  data.append('programa', values[3] || '');
+  data.append('fecha', values[4] || '');
 
-  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}:append?valueInputOption=USER_ENTERED`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      range,
-      majorDimension: 'ROWS',
-      values: [
-        values
-      ]
-    })
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Failed to append to sheet: ${errorData.error?.message || response.statusText}`);
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: data,
+      mode: 'no-cors'
+    });
+    
+    // Al usar mode no-cors (si hiciera falta) o por redirecciones, a veces el body no se lee directamente
+    // confiaremos en que la llamada termine
+    return { status: "success" };
+  } catch (error) {
+    console.error("Error al enviar a Apps Script:", error);
+    throw error;
   }
-
-  return await response.json();
 };

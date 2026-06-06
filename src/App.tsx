@@ -3,17 +3,10 @@ import { ChevronRight, ArrowRight, BookOpen, Monitor, Award, Building, Globe, Us
 import { motion, AnimatePresence } from 'motion/react';
 import Markdown from 'react-markdown';
 import { blogArticlesData } from './blogArticles';
-import { initAuth, googleSignIn, getAccessToken } from './auth';
 import { appendLeadToSheet } from './lib/sheets';
 
 const submitLead = async (formName: string, name: string, email: string, phone: string, extraData: string = '') => {
   try {
-    let token = await getAccessToken();
-    if (!token) {
-      const result = await googleSignIn();
-      if (!result) return false;
-    }
-    
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -36,7 +29,6 @@ const submitLead = async (formName: string, name: string, email: string, phone: 
     return true;
   } catch (error: any) {
     console.error("Error inside submitLead:", error);
-    alert("Error de conexión: " + (error.message || "No se pudo autenticar. Verifica tu dominio en Firebase."));
     return false;
   }
 };
@@ -439,11 +431,6 @@ export default function App() {
   const [isPdfFormSubmitted, setIsPdfFormSubmitted] = useState(false);
   const [isPdfSubmitting, setIsPdfSubmitting] = useState(false);
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    const unsubscribe = initAuth();
-    return () => unsubscribe();
-  }, []);
 
   const openArticleList = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
