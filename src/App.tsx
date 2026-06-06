@@ -432,11 +432,51 @@ export default function App() {
   const [isPdfSubmitting, setIsPdfSubmitting] = useState(false);
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
+  useEffect(() => {
+    // Handle initial load based on URL path
+    const path = window.location.pathname;
+    if (path.startsWith('/articulo/')) {
+      const articleId = path.split('/articulo/')[1];
+      setCurrentView('articulos');
+      setSelectedArticleId(articleId);
+      
+      const article = blogArticlesData.find(a => a.id === articleId);
+      if (article) {
+        document.title = `${article.title} - CPEM`;
+      }
+    } else if (path === '/articulos') {
+      setCurrentView('articulos');
+      setSelectedArticleId(null);
+      document.title = "Artículos - CPEM";
+    }
+
+    // Handle back button
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/articulo/')) {
+        const articleId = path.split('/articulo/')[1];
+        setCurrentView('articulos');
+        setSelectedArticleId(articleId);
+      } else if (path === '/articulos') {
+        setCurrentView('articulos');
+        setSelectedArticleId(null);
+      } else {
+        setCurrentView('home');
+        setSelectedArticleId(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const openArticleList = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     setSelectedArticleId(null);
     setCurrentView('articulos');
     setIsMobileMenuOpen(false);
+    window.history.pushState({}, '', '/articulos');
+    document.title = "Artículos - CPEM";
     window.scrollTo(0, 0);
   };
 
@@ -444,7 +484,20 @@ export default function App() {
     if (e) e.preventDefault();
     setSelectedArticleId(id);
     setCurrentView('articulos');
+    window.history.pushState({}, '', `/articulo/${id}`);
+    
+    const article = blogArticlesData.find(a => a.id === id);
+    if (article) {
+      document.title = `${article.title} - CPEM`;
+    }
+    
     window.scrollTo(0, 0);
+  };
+  
+  const handleHomeClick = (e: React.MouseEvent, sectionId: string) => {
+    window.history.pushState({}, '', '/');
+    document.title = "Maestría en Administración Pública - CPEM";
+    scrollToSection(e as any, sectionId);
   };
   
   React.useEffect(() => {
@@ -488,6 +541,12 @@ export default function App() {
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
+    
+    // Always ensure we go back to the root URL when navigating to a section
+    if (window.location.pathname !== '/') {
+      window.history.pushState({}, '', '/');
+      document.title = "Maestría en Administración Pública - CPEM";
+    }
     
     if (currentView !== 'home') {
       setCurrentView('home');
@@ -602,7 +661,7 @@ export default function App() {
               <a href="#proposito" onClick={(e) => scrollToSection(e, 'proposito')} className={`hover:text-ie-blue transition-colors ${activeSection === 'proposito' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Nuestro Propósito</a>
               <a href="#plan-de-estudios" onClick={(e) => scrollToSection(e, 'plan-de-estudios')} className={`hover:text-ie-blue transition-colors ${activeSection === 'plan-de-estudios' && currentView === 'home' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Plan de Estudios</a>
               <a href="#admision" onClick={(e) => scrollToSection(e, 'admision')} className={`hover:text-ie-blue transition-colors ${activeSection === 'admision' && currentView === 'home' ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Admisiones</a>
-              <a href="#" onClick={openArticleList} className={`hover:text-ie-blue transition-colors ${currentView === 'articulos' && !selectedArticleId ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Artículos</a>
+              <a href="/articulos" onClick={openArticleList} className={`hover:text-ie-blue transition-colors ${currentView === 'articulos' && !selectedArticleId ? 'text-gray-900 border-b-2 border-ie-blue pb-1' : 'pb-1 border-b-2 border-transparent'}`}>Artículos</a>
               <a href="#" onClick={(e) => { e.preventDefault(); setIsAlianzasModalOpen(true); }} className="hover:text-ie-blue transition-colors pb-1 border-b-2 border-transparent">Alianzas Corporativas</a>
             </nav>
             <div className="flex items-center space-x-2 xl:space-x-3">
@@ -646,7 +705,7 @@ export default function App() {
                     href="#admision" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => scrollToSection(e, 'admision')}>Admisiones</motion.a>
                 <motion.a 
                     initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.32 }}
-                    href="#" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={openArticleList}>Artículos</motion.a>
+                    href="/articulos" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={openArticleList}>Artículos</motion.a>
                 <motion.a 
                     initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.35 }}
                     href="#" className="text-lg font-bold tracking-widest text-gray-800 uppercase hover:text-ie-blue" onClick={(e) => { e.preventDefault(); setIsAlianzasModalOpen(true); setIsMobileMenuOpen(false); }}>Alianzas Corporativas</motion.a>
@@ -1157,7 +1216,7 @@ export default function App() {
               <div className="max-w-[1400px] mx-auto px-6">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {blogArticlesData.filter(a => a.type === 'blog').map((article, idx) => (
-                  <article key={idx} onClick={(e) => openArticle(article.id!, e)} className="group cursor-pointer flex flex-col items-start bg-gray-50 border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                  <a href={`/articulo/${article.id}`} key={idx} onClick={(e) => openArticle(article.id!, e)} className="group cursor-pointer flex flex-col items-start bg-gray-50 border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
                     <div className="w-full h-48 overflow-hidden relative">
                       <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute top-4 left-4 bg-ie-blue text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
@@ -1179,12 +1238,12 @@ export default function App() {
                         {article.description}
                       </p>
                       <footer className="mt-auto border-t border-gray-200 pt-4 w-full">
-                        <a href="#" onClick={(e) => {e.preventDefault(); openArticle(article.id!)}} className="text-ie-blue font-bold text-sm uppercase tracking-wide group-hover:underline flex items-center gap-2">
+                        <span className="text-ie-blue font-bold text-sm uppercase tracking-wide group-hover:underline flex items-center gap-2">
                           Leer artículo <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </a>
+                        </span>
                       </footer>
                     </div>
-                  </article>
+                  </a>
                 ))}
             </div>
           </div>
@@ -1195,12 +1254,13 @@ export default function App() {
             {blogArticlesData.filter(a => a.id === selectedArticleId).map(article => (
               <article key={article.id} className="pt-24 pb-20">
                 <div className="max-w-4xl mx-auto px-6 mb-12">
-                  <button 
+                  <a 
+                    href="/articulos"
                     onClick={openArticleList}
-                    className="flex items-center gap-2 text-ie-blue font-bold uppercase tracking-wider text-sm hover:text-[#000c2e] transition-colors mb-8"
+                    className="inline-flex items-center gap-2 text-ie-blue font-bold uppercase tracking-wider text-sm hover:text-[#000c2e] transition-colors mb-8"
                   >
                     <ArrowLeft className="w-4 h-4" /> Volver a Artículos
-                  </button>
+                  </a>
                   <div className="flex items-center gap-3 text-sm text-gray-500 font-medium mb-6">
                     <span className="bg-ie-blue/10 text-ie-blue px-3 py-1 rounded-full uppercase tracking-wider text-xs font-bold">Actualidad</span>
                     <span>•</span>
