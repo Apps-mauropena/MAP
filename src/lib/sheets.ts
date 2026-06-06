@@ -1,13 +1,5 @@
 export const appendLeadToSheet = async (values: any[]) => {
-  // Cuando tengas la URL de tu Web App de Google Apps Script, pégala aquí:
-  const APPS_SCRIPT_URL = "URL_DE_TU_APPS_SCRIPT_AQUI"; 
-  
-  if (APPS_SCRIPT_URL === "URL_DE_TU_APPS_SCRIPT_AQUI") {
-    console.warn("Falta configurar la URL de Apps Script en src/lib/sheets.ts");
-    // Simulamos un retraso y un éxito para que continúe la UI
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return { status: "success" };
-  }
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs-7gU0fgu5dZNAlyogk3ybzwwJtpU_552fI7iot6Nk6uky34xBXE0ZUMtBhTBqc4/exec"; 
 
   // values es un array: [nombre, email, telefono, programa, fecha]
   const data = new URLSearchParams();
