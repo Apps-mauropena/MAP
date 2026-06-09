@@ -1138,7 +1138,7 @@ export default function App() {
                       <LiteYouTube 
                         videoId={carouselSequence[currentBlogIndex].videoId!} 
                         title={carouselSequence[currentBlogIndex].title}
-                        customThumbnail="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/entrevista.senadora.cpem.webp"
+                        customThumbnail="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/entrevista2.senadora.cpem.webp"
                         className="w-full h-full absolute inset-0 z-0"
                       />
                       <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/90 to-transparent pointer-events-none z-10">
