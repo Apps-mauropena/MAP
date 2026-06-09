@@ -1167,11 +1167,19 @@ export default function App() {
                 </button>
               </div>
             </div>
-            <div className="relative h-80 hover:h-[400px] transition-all duration-500 ease-out z-10 group overflow-hidden bg-black cursor-pointer rounded-2xl shadow-xl border border-white/10" onClick={() => {
-              const videoIds = ['ljNg3_iLNps', 'NRHP2u7xUPY'];
-              setCurrentVideoId(videoIds[Math.floor(Math.random() * videoIds.length)]);
-              setIsPlayingMuestra(true);
-            }}>
+            <motion.div 
+              initial={{ height: 320 }}
+              whileInView={{ height: window?.innerWidth < 768 ? 400 : 320 }}
+              whileHover={{ height: 400 }}
+              whileTap={{ scale: 0.96, height: 400 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="relative z-10 group overflow-hidden bg-black cursor-pointer rounded-2xl shadow-xl border border-white/10" 
+              onClick={() => {
+                const videoIds = ['ljNg3_iLNps', 'NRHP2u7xUPY'];
+                setCurrentVideoId(videoIds[Math.floor(Math.random() * videoIds.length)]);
+                setIsPlayingMuestra(true);
+              }}
+            >
               <img width="800" height="600" loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&fm=webp&w=1200" alt="Clase Muestra" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
               <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                 
@@ -1207,7 +1215,7 @@ export default function App() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -1293,7 +1301,7 @@ export default function App() {
                 
                 {article.image && (
                   <div className="w-full h-[400px] md:h-[500px] mb-12">
-                    <img width="1200" height="800" fetchpriority="high" src={article.image?.includes('unsplash') ? article.image.replace('&q=80', '&q=80&fm=webp') : article.image} alt={article.title} className="w-full h-full object-cover" />
+                    <img width="1200" height="800" fetchPriority="high" src={article.image?.includes('unsplash') ? article.image.replace('&q=80', '&q=80&fm=webp') : article.image} alt={article.title} className="w-full h-full object-cover" />
                   </div>
                 )}
                 
@@ -1426,7 +1434,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full h-full md:max-w-6xl md:max-h-[80vh] bg-black md:rounded-2xl overflow-hidden relative"
+              className="w-full aspect-video max-w-6xl bg-black md:rounded-2xl overflow-hidden relative"
             >
               <iframe 
                 ref={iframeRef}
