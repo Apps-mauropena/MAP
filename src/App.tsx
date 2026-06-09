@@ -427,6 +427,7 @@ const VinculacionesModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
 
 export default function App() {
   const [activeTab, setActiveTab] = useState(1);
+  const [openMobileTabs, setOpenMobileTabs] = useState<number[]>([1]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -581,6 +582,7 @@ export default function App() {
     
     if (sectionId === 'plan-de-estudios') {
       setActiveTab(1); // Ensure Primer Cuatrimestre is active
+      setOpenMobileTabs([1]);
       
       // We want to scroll directly to the panel content for Primer Cuatrimestre
       setTimeout(() => {
@@ -767,7 +769,7 @@ export default function App() {
       {/* HOME VIEW: Hidden when in articulos view */}
       <div className={currentView === 'home' ? 'block' : 'hidden'}>
         {/* Hero Section */}
-        <section id="institucion" className="relative w-full overflow-hidden h-[75vh] min-h-[520px] md:h-[80vh] md:min-h-[640px]">
+        <section id="institucion" className="relative w-full overflow-hidden h-[80vh] min-h-[620px] md:h-[80vh] md:min-h-[640px]">
         <div className="absolute inset-0 z-0">
           <img 
             width="800"
@@ -784,13 +786,13 @@ export default function App() {
         
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 h-full flex flex-col justify-center">
           <div className="max-w-3xl mt-20 md:mt-8 text-center md:text-left flex flex-col items-center md:items-start mx-auto md:mx-0">
-            <h1 className="text-3xl md:text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight mb-6 uppercase">
+            <h1 className="mt-[85px] md:mt-0 text-4xl md:text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight mb-6 uppercase">
               Liderazgo de Excelencia para el Sector Público
             </h1>
             <p className="text-base md:text-xl lg:text-2xl text-gray-200 mb-10 font-normal leading-relaxed max-w-2xl px-2 md:px-0">
               Fórmate con la <strong className="text-white font-semibold">Maestría en Administración Pública</strong> del Centro de Postgrados del Estado de México. Prepárate para diseñar, implementar y evaluar políticas que transforman a la sociedad.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-5 md:mb-0">
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-[110px] md:mb-0">
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="group relative w-full sm:w-auto px-8 py-4 bg-ie-blue text-white text-sm md:text-base font-bold uppercase tracking-wider transition-all border border-transparent overflow-hidden"
@@ -951,7 +953,7 @@ export default function App() {
               {curriculumData.map((term, index) => (
                 <div key={`desktop-tab-${term.id}`} className="relative group">
                   <button
-                    onClick={() => setActiveTab(term.id)}
+                    onClick={() => { setActiveTab(term.id); setOpenMobileTabs([term.id]); }}
                     className={`relative z-10 w-full text-left px-6 py-4 font-bold uppercase tracking-wide transition-colors duration-300 ${
                       activeTab === term.id 
                         ? 'text-white' 
@@ -1006,49 +1008,65 @@ export default function App() {
                   {/* Mobile Accordion Button */}
                   <div className="relative group lg:hidden w-full outline-none">
                     <button
-                      onClick={() => setActiveTab(activeTab === term.id ? 0 : term.id)}
+                      onClick={() => {
+                        setOpenMobileTabs(prev => {
+                          if (prev.includes(term.id)) {
+                             return prev.filter(t => t !== term.id);
+                          } else {
+                             setActiveTab(term.id);
+                             return [...prev, term.id];
+                          }
+                        });
+                      }}
                       className={`relative w-full z-10 text-left px-6 py-4 font-bold uppercase tracking-wide transition-colors duration-300 ${
-                        activeTab === term.id 
+                        openMobileTabs.includes(term.id) 
                           ? 'text-white' 
                           : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
                       <div className="flex items-center justify-between relative z-10">
                         <span>{term.title}</span>
-                        <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${activeTab === term.id ? 'rotate-90 text-white' : 'text-gray-400 group-hover:text-ie-blue'}`} />
+                        <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${openMobileTabs.includes(term.id) ? 'rotate-90 text-white' : 'text-gray-400 group-hover:text-ie-blue'}`} />
                       </div>
                     </button>
-                    {activeTab === term.id ? (
-                      <motion.div
-                        layoutId="active-tab-indicator-mobile"
+                    {openMobileTabs.includes(term.id) ? (
+                      <div
                         className="absolute inset-0 bg-ie-blue rounded-lg shadow-md z-0"
-                        initial={false}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors duration-300 z-0"></div>
+                      <div className="absolute inset-0 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors duration-300 z-0 border border-transparent group-hover:border-gray-200"></div>
                     )}
                   </div>
 
                   {/* Panel Content */}
-                  <div className={`transition-opacity duration-500 ${activeTab === term.id ? 'block opacity-100 mt-4 lg:mt-0' : 'hidden opacity-0'}`}>
-                    <div id={term.id === 1 ? 'ancla-primer-cuatrimestre' : undefined} className="bg-[#f8f9fa] border-l-4 border-ie-blue p-8 mb-8">
-                      <h3 className="text-2xl font-bold uppercase text-gray-900 mb-2">{term.title}</h3>
-                      <p className="text-gray-600">Consolida tus habilidades directivas a través de estas unidades de competencia intensivas.</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {term.courses.map((course, idx) => (
-                        <div key={idx} className="border border-gray-200 p-8 flex flex-col hover:border-ie-blue transition-colors bg-white group">
-                          <span className="text-ie-blue font-bold text-sm tracking-wider mb-2">{course.code}</span>
-                          <h4 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-ie-blue transition-colors">{course.name}</h4>
-                          <p className="text-gray-600 text-sm leading-relaxed mt-auto relative pt-4 before:content-[''] before:w-8 before:h-0.5 before:bg-ie-blue before:absolute before:top-0 before:left-0 whitespace-pre-line">
-                            {course.desc}
-                          </p>
+                  <AnimatePresence initial={false}>
+                    {(activeTab === term.id || openMobileTabs.includes(term.id)) && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className={`overflow-hidden lg:overflow-visible mt-4 lg:mt-0 ${openMobileTabs.includes(term.id) ? 'block' : 'hidden'} ${activeTab === term.id ? 'lg:block' : 'lg:hidden'}`}
+                      >
+                        <div id={term.id === 1 ? 'ancla-primer-cuatrimestre' : undefined} className="bg-[#f8f9fa] border-l-4 border-ie-blue p-8 mb-8">
+                          <h3 className="hidden lg:block text-2xl font-bold uppercase text-gray-900 mb-2">{term.title}</h3>
+                          <p className="text-gray-600">Consolida tus habilidades directivas a través de estas unidades de competencia intensivas.</p>
                         </div>
-                      ))}
-                    </div>
-                  </div>
+
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {term.courses.map((course, idx) => (
+                            <div key={idx} className="border border-gray-200 p-8 flex flex-col hover:border-ie-blue transition-colors bg-white group">
+                              <span className="text-ie-blue font-bold text-sm tracking-wider mb-2">{course.code}</span>
+                              <h4 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-ie-blue transition-colors">{course.name}</h4>
+                              <p className="text-gray-600 text-sm leading-relaxed mt-auto relative pt-4 before:content-[''] before:w-8 before:h-0.5 before:bg-ie-blue before:absolute before:top-0 before:left-0 whitespace-pre-line">
+                                {course.desc}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
 
