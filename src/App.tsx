@@ -631,11 +631,11 @@ export default function App() {
             <div 
               className={`bg-ie-blue transition-all duration-300 flex-shrink-0 ${isScrolled ? 'h-9 w-28 md:h-14 md:w-48' : 'h-11 w-36 md:h-16 md:w-56'}`}
               style={{
-                WebkitMaskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logo.png)',
+                WebkitMaskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logoCPEM.webp)',
                 WebkitMaskSize: 'contain',
                 WebkitMaskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'left center',
-                maskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logo.png)',
+                maskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logoCPEM.webp)',
                 maskSize: 'contain',
                 maskRepeat: 'no-repeat',
                 maskPosition: 'left center'
@@ -760,7 +760,7 @@ export default function App() {
             height="800"
             loading="lazy"
             decoding="async"
-            src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/cara.map.cpem.jpg" 
+            src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/cara.map.cpem.webp" 
             alt="Senadores y funcionarios públicos de México en sesión formal" 
             className="w-full h-full object-cover object-center grayscale-[20%]"
           />
@@ -865,7 +865,7 @@ export default function App() {
          </div>
          <div 
            className="w-full md:w-1/2 min-h-[400px] bg-cover bg-[center_-10px] md:bg-center"
-           style={{ backgroundImage: "url('https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/map.portada.04.png')" }}
+           style={{ backgroundImage: "url('https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/map.portada.04.webp')" }}
          >
          </div>
       </section>
@@ -878,7 +878,7 @@ export default function App() {
               <div className="relative flex items-center mb-6">
                 <h2 className="text-4xl md:text-5xl font-extrabold text-ie-blue uppercase tracking-tight relative z-10">Plan de Estudios</h2>
                 <div className="ml-[30px] z-20 flex-shrink-0">
-                  <img width="200" height="90" loading="lazy" decoding="async" src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/rvoe.sep.cpem.png" alt="RVOE SEP" className="h-[60px] md:h-[90px] w-auto drop-shadow-md object-contain" />
+                  <img width="200" height="90" loading="lazy" decoding="async" src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/rvoe.sep.cpem.webp" alt="RVOE SEP" className="h-[60px] md:h-[90px] w-auto drop-shadow-md object-contain" />
                 </div>
               </div>
               <p className="text-xl text-gray-600 mb-4 leading-relaxed">
@@ -1144,7 +1144,7 @@ export default function App() {
               </AnimatePresence>
             </div>
             <div className="relative h-80 group cursor-pointer overflow-hidden">
-              <img width="800" height="600" loading="lazy" decoding="async" src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/portada-folleto.map.png" alt="Folleto Informativo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <img width="800" height="600" loading="lazy" decoding="async" src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/portada-folleto.map.webp" alt="Folleto Informativo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/50 transition-colors flex flex-col items-center justify-center p-6 text-center gap-4">
                 <span className="text-white font-bold text-xl uppercase tracking-wider">Folleto Informativo</span>
                 <button onClick={(e) => { e.preventDefault(); setIsPdfModalOpen(true); }} className="inline-block px-6 py-2 bg-ie-blue text-white text-sm font-bold uppercase tracking-wider hover:bg-white hover:text-ie-blue transition-colors border border-transparent hover:border-ie-blue shadow-md mt-2">
