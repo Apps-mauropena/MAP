@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { ChevronRight, ArrowRight, BookOpen, Monitor, Award, Building, Globe, Users, Menu, X, Facebook, Youtube, Phone, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import Markdown from 'react-markdown';
+import { LiteYouTube } from './components/LiteYouTube';
+const LazyMarkdown = React.lazy(() => import('react-markdown'));
 import { blogArticlesData } from './blogArticles';
 import { appendLeadToSheet } from './lib/sheets';
 
@@ -755,6 +756,10 @@ export default function App() {
         <section id="institucion" className="relative w-full overflow-hidden h-[75vh] min-h-[520px] md:h-[80vh] md:min-h-[640px]">
         <div className="absolute inset-0 z-0">
           <img 
+            width="800"
+            height="800"
+            loading="lazy"
+            decoding="async"
             src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/cara.map.cpem.jpg" 
             alt="Senadores y funcionarios públicos de México en sesión formal" 
             className="w-full h-full object-cover object-center grayscale-[20%]"
@@ -873,7 +878,7 @@ export default function App() {
               <div className="relative flex items-center mb-6">
                 <h2 className="text-4xl md:text-5xl font-extrabold text-ie-blue uppercase tracking-tight relative z-10">Plan de Estudios</h2>
                 <div className="ml-[30px] z-20 flex-shrink-0">
-                  <img src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/rvoe.sep.cpem.png" alt="RVOE SEP" className="h-[60px] md:h-[90px] w-auto drop-shadow-md object-contain" />
+                  <img width="200" height="90" loading="lazy" decoding="async" src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/rvoe.sep.cpem.png" alt="RVOE SEP" className="h-[60px] md:h-[90px] w-auto drop-shadow-md object-contain" />
                 </div>
               </div>
               <p className="text-xl text-gray-600 mb-4 leading-relaxed">
@@ -1116,20 +1121,18 @@ export default function App() {
                 >
                   {blogArticlesData[currentBlogIndex].type === 'video' ? (
                     <div className="w-full h-full relative">
-                      <iframe 
-                        className="w-full h-full absolute inset-0 z-0" 
-                        src={`https://www.youtube.com/embed/${blogArticlesData[currentBlogIndex].videoId}`} 
+                      <LiteYouTube 
+                        videoId={blogArticlesData[currentBlogIndex].videoId!} 
                         title={blogArticlesData[currentBlogIndex].title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowFullScreen
-                      ></iframe>
+                        className="w-full h-full absolute inset-0 z-0"
+                      />
                       <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/90 to-transparent pointer-events-none z-10">
                         <span className="text-white font-bold text-xl uppercase tracking-wider drop-shadow-md">{blogArticlesData[currentBlogIndex].title}</span>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <img src={blogArticlesData[currentBlogIndex].image} alt={blogArticlesData[currentBlogIndex].title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" />
+                      <img width="800" height="600" loading="lazy" decoding="async" src={blogArticlesData[currentBlogIndex].image} alt={blogArticlesData[currentBlogIndex].title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" />
                       <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent flex flex-col justify-end p-6">
                         <span className="text-ie-gold text-xs font-bold uppercase tracking-widest mb-2 border-b border-ie-gold/30 pb-2 inline-block w-max">Blog CPEM</span>
                         <h3 className="text-white font-bold text-lg leading-snug mb-2">{blogArticlesData[currentBlogIndex].title}</h3>
@@ -1141,7 +1144,7 @@ export default function App() {
               </AnimatePresence>
             </div>
             <div className="relative h-80 group cursor-pointer overflow-hidden">
-              <img src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/portada-folleto.map.png" alt="Folleto Informativo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <img width="800" height="600" loading="lazy" decoding="async" src="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/portada-folleto.map.png" alt="Folleto Informativo" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/50 transition-colors flex flex-col items-center justify-center p-6 text-center gap-4">
                 <span className="text-white font-bold text-xl uppercase tracking-wider">Folleto Informativo</span>
                 <button onClick={(e) => { e.preventDefault(); setIsPdfModalOpen(true); }} className="inline-block px-6 py-2 bg-ie-blue text-white text-sm font-bold uppercase tracking-wider hover:bg-white hover:text-ie-blue transition-colors border border-transparent hover:border-ie-blue shadow-md mt-2">
@@ -1154,7 +1157,7 @@ export default function App() {
               setCurrentVideoId(videoIds[Math.floor(Math.random() * videoIds.length)]);
               setIsPlayingMuestra(true);
             }}>
-              <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=1200" alt="Clase Muestra" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
+              <img width="800" height="600" loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&fm=webp&w=1200" alt="Clase Muestra" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
               <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                 
                 <div className="relative flex items-center justify-center mb-8">
@@ -1218,7 +1221,7 @@ export default function App() {
                 {blogArticlesData.filter(a => a.type === 'blog').map((article, idx) => (
                   <a href={`/articulo/${article.id}`} key={idx} onClick={(e) => openArticle(article.id!, e)} className="group cursor-pointer flex flex-col items-start bg-gray-50 border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
                     <div className="w-full h-48 overflow-hidden relative">
-                      <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <img width="800" height="600" loading="lazy" decoding="async" src={article.image?.includes('unsplash') ? article.image.replace('&q=80', '&q=80&fm=webp') : article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute top-4 left-4 bg-ie-blue text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
                         Actualidad
                       </div>
@@ -1275,14 +1278,16 @@ export default function App() {
                 
                 {article.image && (
                   <div className="w-full h-[400px] md:h-[500px] mb-12">
-                    <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                    <img width="1200" height="800" fetchpriority="high" src={article.image?.includes('unsplash') ? article.image.replace('&q=80', '&q=80&fm=webp') : article.image} alt={article.title} className="w-full h-full object-cover" />
                   </div>
                 )}
                 
                 <div className="max-w-3xl mx-auto px-6">
                   {article.content ? (
                     <div className="prose prose-lg prose-blue max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-ie-blue hover:prose-a:text-[#000c2e] prose-img:rounded-xl">
-                      <Markdown>{article.content}</Markdown>
+                      <Suspense fallback={<div className="py-12 text-center text-gray-500 font-medium">Cargando contenido...</div>}>
+                        <LazyMarkdown>{article.content}</LazyMarkdown>
+                      </Suspense>
                     </div>
                   ) : (
                     <div className="text-center py-20 text-gray-500">
