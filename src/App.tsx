@@ -438,6 +438,7 @@ export default function App() {
   const [isPlayingMuestra, setIsPlayingMuestra] = useState(false);
   const [isVideoFormRequired, setIsVideoFormRequired] = useState(false);
   const [isVideoFormSubmitted, setIsVideoFormSubmitted] = useState(false);
+  const [showVideoSuccessMessage, setShowVideoSuccessMessage] = useState(false);
   const [currentVideoId, setCurrentVideoId] = useState('ljNg3_iLNps');
   const [currentBlogIndex, setCurrentBlogIndex] = useState(0);
   const [isHoveringBlog, setIsHoveringBlog] = useState(false);
@@ -1467,57 +1468,80 @@ export default function App() {
               <div className="absolute top-0 left-0 w-full h-20 z-[190] bg-transparent pointer-events-auto"></div>
               {/* Overlay to block the YouTube logo on the bottom right */}
               <div className="absolute bottom-0 right-0 w-[140px] h-[70px] z-[190] bg-transparent pointer-events-auto"></div>
-
-              <AnimatePresence>
-                {isVideoFormRequired && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 z-[220] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
-                  >
-                    <div className="bg-white/60 backdrop-blur-xl border border-white/20 p-8 rounded-2xl w-full max-w-md shadow-2xl text-gray-900">
-                      <h3 className="text-2xl font-bold mb-2 tracking-tight">Continúa viendo la clase</h3>
-                      <p className="text-gray-800 mb-6 text-sm font-medium">Completa estos datos para quitar este mensaje de la pantalla.</p>
-                      
-                      <form className="space-y-5" onSubmit={async (e) => {
-                        e.preventDefault();
-                        const target = e.target as typeof e.target & {
-                          0: { value: string };
-                          1: { value: string };
-                          2: { value: string };
-                        };
-                        const name = target[0].value;
-                        const email = target[1].value;
-                        const phone = target[2].value;
-                        
-                        const success = await submitLead('Continúa viendo la clase', name, email, phone);
-                        if (success) {
-                          setIsVideoFormSubmitted(true);
-                          setIsVideoFormRequired(false);
-                        }
-                      }}>
-                        <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Nombre completo</label>
-                          <input type="text" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="Ej. Juan Pérez" />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Correo electrónico</label>
-                          <input type="email" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="juan@correo.com" />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Teléfono / Celular</label>
-                          <input type="tel" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="55 1234 5678" />
-                        </div>
-                        <button type="submit" className="w-full py-3.5 bg-ie-blue text-white rounded-xl font-bold hover:bg-ie-dark transition-colors uppercase tracking-wide text-sm mt-6">
-                          Enviar y Continuar
-                        </button>
-                      </form>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </motion.div>
+
+            <AnimatePresence>
+              {isVideoFormRequired && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[220] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+                >
+                  <div className="bg-white/90 backdrop-blur-xl border border-white/20 p-8 rounded-2xl w-full max-w-md shadow-2xl text-gray-900 my-auto text-center">
+                    {showVideoSuccessMessage ? (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex flex-col items-center py-4"
+                      >
+                        <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
+                          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2 tracking-tight">¡Gracias por registrarte!</h3>
+                        <p className="text-gray-800 font-medium">Tus datos han sido recibidos.</p>
+                        <p className="text-gray-600 text-sm mt-2">Ahora estás conectando con una de las mejores universidades del mundo. Continuarás viendo tu clase en breve.</p>
+                      </motion.div>
+                    ) : (
+                      <>
+                        <h3 className="text-2xl font-bold mb-2 tracking-tight text-left">Continúa viendo la clase</h3>
+                        <p className="text-gray-800 mb-6 text-sm font-medium text-left">Completa estos datos para seguir viendo la clase maestra sin interrupciones.</p>
+                        
+                        <form className="space-y-5 text-left" onSubmit={async (e) => {
+                          e.preventDefault();
+                          const target = e.target as typeof e.target & {
+                            0: { value: string };
+                            1: { value: string };
+                            2: { value: string };
+                          };
+                          const name = target[0].value;
+                          const email = target[1].value;
+                          const phone = target[2].value;
+                          
+                          const success = await submitLead('Continúa viendo la clase', name, email, phone);
+                          if (success) {
+                            setIsVideoFormSubmitted(true);
+                            setShowVideoSuccessMessage(true);
+                            setTimeout(() => {
+                              setIsVideoFormRequired(false);
+                              setShowVideoSuccessMessage(false);
+                            }, 3500);
+                          }
+                        }}>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Nombre completo</label>
+                            <input type="text" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="Ej. Juan Pérez" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Correo electrónico</label>
+                            <input type="email" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="juan@correo.com" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-1.5">Teléfono / Celular</label>
+                            <input type="tel" required className="w-full px-4 py-3 bg-white/50 border border-gray-300 text-gray-900 rounded-xl focus:ring-2 focus:ring-ie-blue focus:border-transparent outline-none transition-all placeholder:text-gray-500" placeholder="55 1234 5678" />
+                          </div>
+                          <button type="submit" className="w-full py-3.5 bg-ie-blue text-white rounded-xl font-bold hover:bg-ie-dark transition-colors uppercase tracking-wide text-sm mt-6">
+                            Enviar y Continuar
+                          </button>
+                        </form>
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </AnimatePresence>
@@ -1531,7 +1555,7 @@ export default function App() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="bg-white max-w-md w-full shadow-2xl relative overflow-hidden flex flex-col"
+              className="bg-white max-w-md w-full shadow-2xl relative overflow-y-auto max-h-[90vh] flex flex-col"
             >
               {/* Decorative top bar */}
               <div className="h-2 w-full bg-ie-gold"></div>
@@ -1615,7 +1639,7 @@ export default function App() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="bg-white w-full max-w-md shadow-2xl relative overflow-hidden"
+              className="bg-white w-full max-w-md shadow-2xl relative overflow-y-auto max-h-[90vh]"
             >
               {/* Decorative top bar */}
               <div className="h-2 w-full bg-ie-gold"></div>
@@ -1732,7 +1756,7 @@ export default function App() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="bg-white max-w-[1150px] w-full rounded-[30px] shadow-[0_20px_60px_rgba(16,37,68,0.15)] relative overflow-hidden flex flex-col md:flex-row my-auto"
+              className="bg-white max-w-[1150px] w-full rounded-[30px] shadow-[0_20px_60px_rgba(16,37,68,0.15)] relative overflow-y-auto max-h-[90vh] flex flex-col md:flex-row my-auto"
             >
               <button 
                 onClick={() => setIsAlianzasModalOpen(false)}
@@ -1880,7 +1904,7 @@ export default function App() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative"
+              className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-y-auto max-h-[90vh] relative"
             >
               <button 
                 onClick={() => {
