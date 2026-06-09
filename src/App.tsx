@@ -645,7 +645,7 @@ export default function App() {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-[66px] md:h-24 flex items-center justify-between">
           <div className="flex items-center space-x-[20px] md:space-x-8 cursor-pointer" onClick={(e) => scrollToSection(e as any, 'institucion')}>
             <div 
-              className={`bg-ie-blue transition-all duration-300 flex-shrink-0 ${isScrolled ? 'h-9 w-28 md:h-14 md:w-48' : 'h-11 w-36 md:h-16 md:w-56'}`}
+              className={`bg-ie-blue transition-all duration-300 flex-shrink-0 ${isScrolled ? 'h-[45px] w-[140px] md:h-14 md:w-48' : 'h-[55px] w-[180px] md:h-16 md:w-56'}`}
               style={{
                 WebkitMaskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logoCPEM.webp?v=1)',
                 WebkitMaskSize: 'contain',
@@ -660,7 +660,7 @@ export default function App() {
               role="img"
             />
             
-            <div className="flex items-center space-x-3 md:space-x-6 flex-shrink-0 relative -left-[25px] md:-left-[80px]">
+            <div className="flex items-center space-x-3 md:space-x-6 flex-shrink-0 relative -left-[50px] md:-left-[80px]">
               <a href="#" className="text-ie-blue hover:text-ie-blue transition-colors relative group" aria-label="Facebook">
                 <FacebookIconFilled className="w-5 h-5 md:w-6 md:h-6 transition-transform duration-300" />
                 <span className="absolute -bottom-2 left-1/2 w-0 h-0.5 bg-ie-blue transition-all duration-300 group-hover:w-full group-hover:-translate-x-1/2"></span>
