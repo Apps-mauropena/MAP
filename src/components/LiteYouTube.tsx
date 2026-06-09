@@ -5,11 +5,12 @@ interface LiteYouTubeProps {
   videoId: string;
   title: string;
   className?: string;
+  customThumbnail?: string;
 }
 
-export const LiteYouTube: React.FC<LiteYouTubeProps> = ({ videoId, title, className = '' }) => {
+export const LiteYouTube: React.FC<LiteYouTubeProps> = ({ videoId, title, className = '', customThumbnail }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  const thumbnailUrl = customThumbnail || `https://img.youtube.com/vi/${videoId.split('?')[0]}/maxresdefault.jpg`;
 
   return (
     <div 

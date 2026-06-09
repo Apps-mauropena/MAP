@@ -6,6 +6,20 @@ const LazyMarkdown = React.lazy(() => import('react-markdown'));
 import { blogArticlesData } from './blogArticles';
 import { appendLeadToSheet } from './lib/sheets';
 
+const carouselSequence = (() => {
+  const videoItem = blogArticlesData.find(item => item.id === 'entrevista-cpem');
+  const blogItems = blogArticlesData.filter(item => item.type === 'blog');
+  
+  if (!videoItem) return blogArticlesData;
+  
+  const sequence: (typeof blogArticlesData)[0][] = [];
+  for (let i = 0; i < blogItems.length; i++) {
+    sequence.push(videoItem);
+    sequence.push(blogItems[i]);
+  }
+  return sequence;
+})();
+
 const submitLead = async (formName: string, name: string, email: string, phone: string, extraData: string = '') => {
   try {
     const now = new Date();
@@ -535,7 +549,7 @@ export default function App() {
       return;
     }
     const blogTimer = window.setInterval(() => {
-      setCurrentBlogIndex((prev) => (prev + 1) % blogArticlesData.length);
+      setCurrentBlogIndex((prev) => (prev + 1) % carouselSequence.length);
     }, 5000); // rotate every 5 seconds
     return () => window.clearInterval(blogTimer);
   }, [isHoveringBlog]);
@@ -631,11 +645,11 @@ export default function App() {
             <div 
               className={`bg-ie-blue transition-all duration-300 flex-shrink-0 ${isScrolled ? 'h-9 w-28 md:h-14 md:w-48' : 'h-11 w-36 md:h-16 md:w-56'}`}
               style={{
-                WebkitMaskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logoCPEM.webp)',
+                WebkitMaskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logoCPEM.webp?v=1)',
                 WebkitMaskSize: 'contain',
                 WebkitMaskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'left center',
-                maskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logoCPEM.webp)',
+                maskImage: 'url(https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/logoCPEM.webp?v=1)',
                 maskSize: 'contain',
                 maskRepeat: 'no-repeat',
                 maskPosition: 'left center'
@@ -1119,24 +1133,25 @@ export default function App() {
                   transition={{ duration: 1 }}
                   className="absolute inset-0"
                 >
-                  {blogArticlesData[currentBlogIndex].type === 'video' ? (
+                  {carouselSequence[currentBlogIndex].type === 'video' ? (
                     <div className="w-full h-full relative">
                       <LiteYouTube 
-                        videoId={blogArticlesData[currentBlogIndex].videoId!} 
-                        title={blogArticlesData[currentBlogIndex].title}
+                        videoId={carouselSequence[currentBlogIndex].videoId!} 
+                        title={carouselSequence[currentBlogIndex].title}
+                        customThumbnail="https://raw.githubusercontent.com/Apps-mauropena/MAP/main/public/entrevista.senadora.cpem.webp"
                         className="w-full h-full absolute inset-0 z-0"
                       />
                       <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/90 to-transparent pointer-events-none z-10">
-                        <span className="text-white font-bold text-xl uppercase tracking-wider drop-shadow-md">{blogArticlesData[currentBlogIndex].title}</span>
+                        <span className="text-white font-bold text-xl uppercase tracking-wider drop-shadow-md">{carouselSequence[currentBlogIndex].title}</span>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <img width="800" height="600" loading="lazy" decoding="async" src={blogArticlesData[currentBlogIndex].image} alt={blogArticlesData[currentBlogIndex].title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" />
+                      <img width="800" height="600" loading="lazy" decoding="async" src={carouselSequence[currentBlogIndex].image} alt={carouselSequence[currentBlogIndex].title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" />
                       <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent flex flex-col justify-end p-6">
                         <span className="text-ie-gold text-xs font-bold uppercase tracking-widest mb-2 border-b border-ie-gold/30 pb-2 inline-block w-max">Blog CPEM</span>
-                        <h3 className="text-white font-bold text-lg leading-snug mb-2">{blogArticlesData[currentBlogIndex].title}</h3>
-                        <p className="text-gray-300 text-sm line-clamp-2">{blogArticlesData[currentBlogIndex].description}</p>
+                        <h3 className="text-white font-bold text-lg leading-snug mb-2">{carouselSequence[currentBlogIndex].title}</h3>
+                        <p className="text-gray-300 text-sm line-clamp-2">{carouselSequence[currentBlogIndex].description}</p>
                       </div>
                     </>
                   )}
